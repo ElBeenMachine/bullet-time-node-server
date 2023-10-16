@@ -38,7 +38,8 @@ def hello():
         result, image = cam.read()
         res, frame = cv.imencode(".jpg", image)
         data = base64.b64encode(frame)
-    except:
+    except Exception as e:
+        print(e)
         return "An unexpected error has occurred while processing the image", 500
 
     # Return the result in a JSON format with the device node name attached to the resposne
