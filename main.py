@@ -19,7 +19,8 @@ def hello():
     # Check to see if the provided source is valid
     try:
         checkCamera(0)
-    except:
+    except Exception as e:
+        print(e)
         return "Unable to load a camera", 500
 
     # Capture a picture from the source and process it into a Base64 String
