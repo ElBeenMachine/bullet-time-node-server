@@ -2,7 +2,7 @@ echo "Installing necessary python modules"
 pip install -r requirements.txt
 
 echo ""
-echo "\nInstalling necessary camera modules"
+echo "Installing necessary camera modules"
 sudo apt install -y python3-picamera2
 
 echo ""
