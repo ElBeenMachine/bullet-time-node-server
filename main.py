@@ -1,7 +1,21 @@
 from flask import Flask, json
-import cv2 as cv
 import base64
 import platform
+
+# Import the new camera class
+from picamera2 import Picamera2
+
+# Class to initialise the camera
+class Camera:
+    def __init__(self):         
+        #set up camera
+        self.picam2 = Picamera2()
+        camera_config = self.picam2.create_preview_configuration(main={"size": (4608, 2592)})
+        self.picam2.configure(camera_config)
+        self.picam2.start()
+
+    def takeImage(self,path):
+        self.picam2.capture_file(path)
 
 app = Flask(__name__)
 
@@ -14,30 +28,13 @@ def checkCamera(source):
 
 @app.route("/capture")
 def hello():
-    print("Capturing Image")
-
-    # Check to see if the provided source is valid
-    try:
-        checkCamera(0)
-    except Exception as e:
-        print(e)
-        return "Unable to load a camera", 500
-
     # Capture a picture from the source and process it into a Base64 String
     try:
-        # Get the first camera source on the node
-        cam = cv.VideoCapture(0)
-
-        # Set camera resolution to 1080p
-        width = 1920
-        height = 1080
-        cam.set(cv.CAP_PROP_FRAME_WIDTH, width)
-        cam.set(cv.CAP_PROP_FRAME_HEIGHT, height)
-
-        # Capture image
-        result, image = cam.read()
-        res, frame = cv.imencode(".jpg", image)
-        data = base64.b64encode(frame)
+        cam = Camera()
+        
+        cam.takeImage("img.jpg")
+        with open('img.jpg', 'rb') as image_file:
+            data = base64.b64encode(image_file.read())
     except Exception as e:
         print(e)
         return "An unexpected error has occurred while processing the image", 500
