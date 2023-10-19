@@ -1,3 +1,6 @@
+echo "Installing Pip"
+sudo apt-get install python3-pip
+
 echo "Installing necessary python modules"
 pip install -r requirements.txt
 
