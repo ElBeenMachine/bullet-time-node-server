@@ -2,38 +2,21 @@ from flask import Flask, json
 import base64
 import platform
 
-# Import the new camera class
+# Set up the camera
 from picamera2 import Picamera2
-
-# Class to initialise the camera
-class Camera:
-    def __init__(self):         
-        #set up camera
-        self.picam2 = Picamera2()
-        camera_config = self.picam2.create_preview_configuration(main={"size": (4608, 2592)})
-        self.picam2.configure(camera_config)
-
-    def takeImage(self,path):
-        self.picam2.start()
-        self.picam2.capture_file(path)
-        self.picam2.stop()
+cam = Picamera2()
+camera_config = cam.create_preview_configuration(main={"size": (4608, 2592)})
+cam.configure(camera_config)
+cam.start()
 
 app = Flask(__name__)
-
-
-def checkCamera(source):
-    cap = cv.VideoCapture(source)
-    if cap is None or not cap.isOpened():
-        raise Exception("Camera Not Active")
-
 
 @app.route("/capture")
 def hello():
     # Capture a picture from the source and process it into a Base64 String
     try:
-        cam = Camera()
+        cam.capture_file("img.jpg")
         
-        cam.takeImage("img.jpg")
         with open('img.jpg', 'rb') as image_file:
             data = base64.b64encode(image_file.read())
     except Exception as e:
