@@ -12,10 +12,11 @@ class Camera:
         self.picam2 = Picamera2()
         camera_config = self.picam2.create_preview_configuration(main={"size": (4608, 2592)})
         self.picam2.configure(camera_config)
-        self.picam2.start()
 
     def takeImage(self,path):
+        self.picam2.start()
         self.picam2.capture_file(path)
+        self.picam2.stop()
 
 app = Flask(__name__)
 
