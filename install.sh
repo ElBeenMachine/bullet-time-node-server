@@ -10,7 +10,3 @@ pip install -r requirements.txt
 echo ""
 echo "Installing necessary camera modules"
 sudo apt install python3-picamera2 -y
-
-echo ""
-echo "Running Server"
-python main.py
