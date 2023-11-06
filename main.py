@@ -13,8 +13,9 @@ cam.start()
 app = Flask(__name__)
 
 
+# Capture route to capture input from the camera
 @app.route("/capture")
-def hello():
+def capture():
     # Capture a picture from the source and process it into a Base64 String
     try:
         cam.capture_file("img.jpg")
@@ -27,6 +28,13 @@ def hello():
 
     # Return the result in a JSON format with the device node name attached to the resposne
     return json.dumps({"node": platform.node(), "data": data.decode("utf-8")}), 200
+
+
+# Ping route to check if node is active
+@app.route("/ping")
+def ping():
+    # Return a pong
+    return json.dumps({"response": "Pong!"}), 200
 
 
 # Start the web server
