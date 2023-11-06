@@ -10,3 +10,18 @@ pip install -r requirements.txt
 echo ""
 echo "Installing necessary camera modules"
 sudo apt install python3-picamera2 -y
+
+echo ""
+echo "Making update script executable"
+chmod +x ./update.sh
+
+echo ""
+echo "Copying service file to /lib/systemd/system/"
+sudo cp ./bulletTime.service /lib/systemd/system/bulletTime.service
+
+echo "Enabling service"
+sudo chmod 644 /lib/systemd/system/bulletTime.service
+chmod +x ./main.py
+sudo systemctl daemon-reload
+sudo systemctl enable bulletTime.service
+sudo systemctl start bulletTime.service
