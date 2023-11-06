@@ -5,7 +5,7 @@ echo "Installing Pip"
 sudo apt-get install python3-pip -y
 
 echo "Installing necessary python modules"
-pip install -r requirements.txt
+sudo apt install python3-flask
 
 echo ""
 echo "Installing necessary camera modules"
@@ -14,6 +14,9 @@ sudo apt install python3-picamera2 -y
 echo ""
 echo "Making update script executable"
 chmod +x ./update.sh
+
+echo "Copying to system folder"
+sudo cp ./* /etc/bullet-time/*
 
 echo ""
 echo "Copying service file to /lib/systemd/system/"
