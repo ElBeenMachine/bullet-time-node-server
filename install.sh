@@ -16,15 +16,8 @@ echo "Making update script executable"
 chmod +x ./update.sh
 
 echo "Copying to system folder"
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 sudo mkdir /etc/bullet-time
->>>>>>> Stashed changes
-sudo cp ./. /etc/bullet-time/.
-=======
-sudo cp -r ./. /etc/bullet-time/.
->>>>>>> 5f31143984487e5a01b0caa50cc3eae3e5923a39
+sudo cp ./. /etc/bullet-time/. -r
 
 echo ""
 echo "Copying service file to /lib/systemd/system/"
