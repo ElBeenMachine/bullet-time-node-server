@@ -16,7 +16,7 @@ echo "Making update script executable"
 chmod +x ./update.sh
 
 echo "Copying to system folder"
-sudo cp ./. /etc/bullet-time/.
+sudo cp -r ./. /etc/bullet-time/.
 
 echo ""
 echo "Copying service file to /lib/systemd/system/"
