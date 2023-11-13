@@ -16,6 +16,10 @@ echo "Making update script executable"
 chmod +x ./update.sh
 
 echo "Copying to system folder"
+<<<<<<< Updated upstream
+=======
+sudo mkdir /etc/bullet-time
+>>>>>>> Stashed changes
 sudo cp ./. /etc/bullet-time/.
 
 echo ""
