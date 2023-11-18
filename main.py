@@ -1,4 +1,4 @@
-from flask import Flask, json
+from flask import Flask, json, jsonify
 import base64
 import platform
 
@@ -34,7 +34,9 @@ def capture():
 @app.route("/ping")
 def ping():
     # Return a pong
-    return json.dumps({"response": "Pong!"}), 200
+    response = jsonify({"response": "Pong!", "node": platform.node()})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200    
 
 
 # Start the web server
