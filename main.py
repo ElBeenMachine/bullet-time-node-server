@@ -18,7 +18,7 @@ async def connect(sid, environ):
 @sio.event
 async def CAPTURE_IMAGE(sid, data):
     print(f"Message from {sid}: {data}")
-    # You can broadcast the message to all connected clients
+    captureImage()
     await sio.send(sid, "Thanks for the message!")
 
 # Define an error event

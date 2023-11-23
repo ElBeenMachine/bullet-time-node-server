@@ -1,5 +1,5 @@
 [Unit]
-Description=Bullet time node server Python script
+Description=Bullet-Time Node Server
 After=multi-user.target
 
 [Service]
