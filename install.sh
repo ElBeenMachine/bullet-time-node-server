@@ -5,7 +5,7 @@ echo "Installing Pip"
 sudo apt-get install python3-pip -y
 
 echo "Installing necessary python modules"
-sudo apt install python3-flask
+sudo apt install python3-socketio
 
 echo ""
 echo "Installing necessary camera modules"
