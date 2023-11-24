@@ -16,7 +16,7 @@ def captureImage():
 
         # Open the image and return the data as a base64 encoded string
         with open("img.jpg", "rb") as image_file:
-            data = base64.b64encode(image_file.read())
+            data = image_file.read()
             return data
     except Exception as e:
         print(f"🔴 | {e}")
