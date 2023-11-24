@@ -46,3 +46,5 @@ sudo chmod +x ./install.sh
 sudo chmod +x ./update.sh
 
 ./install.sh
+
+sudo reboot now
