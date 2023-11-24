@@ -6,6 +6,15 @@ read nodeNum
 echo ""
 
 echo "============ System Configuration (10.0.0.$nodeNum) ============"
+
+echo "" sudo | sudo tee /etc/hosts
+echo "127.0.0.1       localhost" sudo | sudo tee -a /etc/hosts
+echo "::1             localhost ip6-localhost ip6-loopback" sudo | sudo tee -a /etc/hosts
+echo "ff02::1         ip6-allnodes" sudo | sudo tee -a /etc/hosts
+echo "ff02::2         ip6-allrouters" sudo | sudo tee -a /etc/hosts
+echo "" sudo | sudo tee -a /etc/hosts
+echo "127.0.1.1               btns-node-$nodeNum" sudo | sudo tee -a /etc/hosts
+
 sudo hostnamectl set-hostname btns-node-$nodeNum
 echo Hostname set to btns-node-$nodeNum
 
