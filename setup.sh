@@ -12,13 +12,14 @@ echo ""
 echo Updating system
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-echo "127.0.1.1               btns-node-$nodeNum" | sudo tee /etc/hosts
-echo "127.0.0.1       localhost" | sudo tee -a /etc/hosts
-echo "::1             localhost ip6-localhost ip6-loopback" | sudo tee -a /etc/hosts
-echo "ff02::1         ip6-allnodes" | sudo tee -a /etc/hosts
-echo "ff02::2         ip6-allrouters" | sudo tee -a /etc/hosts
-
 sudo hostnamectl set-hostname btns-node-$nodeNum
+
+echo "127.0.1.1               btns-node-$nodeNum" | tee /etc/hosts
+echo "127.0.0.1       localhost" | tee -a /etc/hosts
+echo "::1             localhost ip6-localhost ip6-loopback" | tee -a /etc/hosts
+echo "ff02::1         ip6-allnodes" | tee -a /etc/hosts
+echo "ff02::2         ip6-allrouters" | tee -a /etc/hosts
+
 echo Hostname set to btns-node-$nodeNum
 
 mkdir -p /etc/network/interfaces.d

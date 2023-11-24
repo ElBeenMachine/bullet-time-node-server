@@ -19,3 +19,5 @@ sudo systemctl enable bulletTime.service
 sudo systemctl start bulletTime.service
 
 systemctl status bulletTime.service
+
+sudo apt autoremove -y
