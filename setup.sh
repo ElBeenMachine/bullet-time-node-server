@@ -10,7 +10,7 @@ echo "============ System Configuration (10.0.0.$nodeNum) ============"
 echo ""
 
 echo Updating system
-sudo apt-get update -y
+sudo apt-get update -y && sudo apt-get upgrade -y
 
 echo "" sudo | sudo tee /etc/hosts
 echo "127.0.0.1       localhost" sudo | sudo tee -a /etc/hosts
