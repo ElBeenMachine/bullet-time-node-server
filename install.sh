@@ -6,6 +6,7 @@ echo ""
 
 echo "================= Installing Dependencies ================="
 sudo apt-get install python3-socketio -y
+sudo apt-get install python3-aiohttp -y
 sudo apt-get install python3-picamera2 -y
 
 echo ""
