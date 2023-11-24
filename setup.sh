@@ -7,6 +7,11 @@ echo ""
 
 echo "============ System Configuration (10.0.0.$nodeNum) ============"
 
+echo ""
+
+echo Updating system
+sudo apt-get update -y
+
 echo "" sudo | sudo tee /etc/hosts
 echo "127.0.0.1       localhost" sudo | sudo tee -a /etc/hosts
 echo "::1             localhost ip6-localhost ip6-loopback" sudo | sudo tee -a /etc/hosts
