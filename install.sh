@@ -11,6 +11,7 @@ sudo apt-get install python3-picamera2 -y
 echo ""
 
 echo "==================== Enabling Service ====================="
+sudo cp ./* /etc/btns/*
 sudo cp ./bulletTime.service /lib/systemd/system/bulletTime.service
 sudo chmod 644 /lib/systemd/system/bulletTime.service
 chmod +x ./main.py
