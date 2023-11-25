@@ -1,6 +1,6 @@
 # Bullet Time Node Server
 
-<img src="https://www.ljmu.ac.uk/-/media/ljmu/logos/ljmu_logo_banner_835.jpg" alt="LJMU Banner Logo" />
+<img src="https://www.ljmu.ac.uk/-/media/ljmu/logos/ljmu_logo_banner_835.jpg" alt="LJMU Banner Logo" width="100%" />
 
 This repository contains the code and necessary installation scripts to run the node server for our bullet-time project on a Raspberry Pi.
 
