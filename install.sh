@@ -1,3 +1,5 @@
+echo ""
+
 echo "==================== Installing Python ===================="
 sudo apt-get install python3 -y
 sudo apt-get install python3-pip -y
