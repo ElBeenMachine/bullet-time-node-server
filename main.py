@@ -20,7 +20,7 @@ async def connect(sid, environ):
 async def CAPTURE_IMAGE(sid, data):
     print(f"Message from {sid}: {data}")
     response = captureImage()
-    await sio.emit("IMAGE_DATA", {"image_data": response})
+    await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
 # Define an error event
 @sio.event
