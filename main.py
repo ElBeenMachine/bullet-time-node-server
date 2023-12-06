@@ -4,6 +4,8 @@ import platform
 from aiohttp import web
 from utils import *
 
+VERSION = "1.0.1"
+
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
@@ -13,7 +15,7 @@ sio.attach(app)
 @sio.event
 async def connect(sid, environ):
     print(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
-    await sio.emit("NODE_DATA", platform.node())
+    await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
 # Define a message event
 @sio.event
