@@ -4,7 +4,7 @@ import platform
 from aiohttp import web
 from utils import *
 
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -20,8 +20,9 @@ async def connect(sid, environ):
 # Define a message event
 @sio.event
 async def CAPTURE_IMAGE(sid, data):
-    print(f"Message from {sid}: {data}")
-    response = captureImage()
+    x = data["resolution"]["x"]
+    y = data["resolution"]["y"]
+    response = captureImage(x, y)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
 # Define an error event
