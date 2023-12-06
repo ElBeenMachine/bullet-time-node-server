@@ -4,7 +4,7 @@ import platform
 from aiohttp import web
 from utils import *
 
-VERSION = "1.0.5"
+VERSION = "1.0.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
