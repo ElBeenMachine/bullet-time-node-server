@@ -4,12 +4,11 @@ import platform
 from aiohttp import web
 import ssl
 from utils import *
+from cryptography import x509
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
-from cryptography.x509.oid import NameOID
-from cryptography.x509 import CertificateBuilder
 
 
 VERSION = "1.0.5"
@@ -23,10 +22,10 @@ def generate_self_signed_cert():
     )
 
     subject = issuer = Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, u'localhost')
+        x509.NameAttribute(x509.NameOID.COMMON_NAME, u'localhost')
     ])
 
-    cert = CertificateBuilder().subject_name(
+    cert = x509.CertificateBuilder().subject_name(
         subject
     ).issuer_name(
         issuer
