@@ -1,7 +1,9 @@
 echo "Updating Repository"
 
-echo "Disabling running service"
+echo "Stopping running service"
 sudo systemctl stop bulletTime.service
+
+echo "Disabling service"
 sudo systemctl disable bulletTime.service
 
 echo "Pulling latest production build from GitHub"
