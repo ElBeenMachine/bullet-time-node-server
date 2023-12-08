@@ -30,7 +30,7 @@ async def CAPTURE_IMAGE(sid, data):
 # Define an update event
 @sio.event
 async def UPDATE(sid, data):
-    command = "cd /home/admin/btns && nohup sudo ./update.sh > update.log 2> update.err < /dev/null &"
+    command = "cd /home/admin/btns && sudo nohup ./update.sh > update.log 2> update.err < /dev/null &"
     args = command.split(" ")
     subprocess.Popen(args=args)
 
