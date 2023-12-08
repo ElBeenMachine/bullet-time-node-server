@@ -11,7 +11,7 @@ sudo apt-get install python3-socketio python3-aiohttp python3-picamera2 -y
 echo ""
 
 echo "==================== Enabling Service ====================="
-sudo mkdir /etc/btns
+sudo mkdir -p /etc/btns
 sudo cp ./. /etc/btns/. -r
 sudo cp ./bulletTime.service /lib/systemd/system/bulletTime.service
 sudo chmod 644 /lib/systemd/system/bulletTime.service
