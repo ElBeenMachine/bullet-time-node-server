@@ -7,7 +7,10 @@ from utils import *
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.x509 import Name, CertificateBuilder, load_pem_x509_certificate
+from cryptography.hazmat.primitives import serialization
+from cryptography.x509.oid import NameOID
+from cryptography.x509 import CertificateBuilder
+
 
 VERSION = "1.0.5"
 
