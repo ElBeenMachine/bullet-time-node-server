@@ -6,7 +6,7 @@ sudo apt-get install python3 python3-pip -y
 echo ""
 
 echo "================= Installing Dependencies ================="
-sudo apt-get install python3-socketio python3-aiohttp python3-picamera2 python3-cryptography -y
+sudo apt-get install python3-socketio python3-aiohttp python3-picamera2 python3-certbot -y
 
 echo ""
 
