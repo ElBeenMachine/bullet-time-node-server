@@ -1,10 +1,10 @@
 echo "Updating Repository"
 
 echo "Stopping running service"
-sudo systemctl stop bulletTime.service
+sudo systemctl stop bulletTime
 
 echo "Disabling service"
-sudo systemctl disable bulletTime.service
+sudo systemctl disable bulletTime
 
 echo "Pulling latest production build from GitHub"
 git stash
