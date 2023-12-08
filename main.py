@@ -24,7 +24,6 @@ async def CAPTURE_IMAGE(sid, data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     response = captureImage(x, y)
-    response="test"
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
 # Define an error event
