@@ -26,3 +26,7 @@ sudo systemctl start bulletTime.service
 systemctl status bulletTime.service
 
 sudo apt autoremove -y
+
+echo Setting Permissions
+cd ../
+sudo chown -R admin:admin ./btns
