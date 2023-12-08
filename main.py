@@ -3,9 +3,10 @@ import socketio
 import platform
 from aiohttp import web
 from utils import *
+import os
 
 
-VERSION = "1.0.5"
+VERSION = "1.1.0"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins=['*'], logger=True)
@@ -25,6 +26,12 @@ async def CAPTURE_IMAGE(sid, data):
     y = data["resolution"]["y"]
     response = captureImage(x, y)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
+
+# Define an update event
+@sio.event
+async def UPDATE(sid, data):
+    os.system("cd /home/admin/btns && nohup sudo ./update.sh > update.log 2> update.err < /dev/null &")
+    await sio.emit("UPDATING_NODE");
 
 # Define an error event
 @sio.event
