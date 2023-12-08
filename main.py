@@ -6,7 +6,7 @@ from utils import *
 import os
 import subprocess
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -26,13 +26,6 @@ async def CAPTURE_IMAGE(sid, data):
     y = data["resolution"]["y"]
     response = captureImage(x, y)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
-
-# Define an update event
-@sio.event
-async def UPDATE(sid, data):
-    command = "cd /home/admin/btns && sudo nohup ./update.sh > update.log 2> update.err < /dev/null &"
-    args = command.split(" ")
-    subprocess.Popen(args=args)
 
 # Define an error event
 @sio.event
