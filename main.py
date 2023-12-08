@@ -86,6 +86,7 @@ if __name__ == '__main__':
 
     # Create an SSL context
     ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ssl_context.load_verify_locations(cafile="certificate.pem")
     ssl_context.load_cert_chain(certfile="certificate.pem", keyfile="private_key.pem")
 
     web.run_app(app, port=port, ssl_context=ssl_context)
