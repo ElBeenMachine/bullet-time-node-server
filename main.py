@@ -9,7 +9,7 @@ import os
 VERSION = "1.1.0"
 
 # Create a new Socket.IO server with specified port
-sio = socketio.AsyncServer(cors_allowed_origins=['*'], logger=True)
+sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
