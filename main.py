@@ -88,7 +88,4 @@ if __name__ == '__main__':
     ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     ssl_context.load_cert_chain(certfile="certificate.pem", keyfile="private_key.pem")
 
-    # Set up the Socket.IO server over HTTPS
-    sio.attach(app, ssl_context=ssl_context)
-
-    web.run_app(app, port=port)
+    web.run_app(app, port=port, ssl_context=ssl_context)
