@@ -4,6 +4,7 @@ import platform
 from aiohttp import web
 from utils import *
 import os
+import subprocess
 
 VERSION = "1.3.0"
 
@@ -29,8 +30,9 @@ async def CAPTURE_IMAGE(sid, data):
 # Define an update event
 @sio.event
 async def UPDATE(sid, data):
-    os.system("cd /home/admin/btns && nohup sudo ./update.sh > update.log 2> update.err < /dev/null &")
-    await sio.emit("UPDATING_NODE");
+    command = "cd /home/admin/btns && nohup sudo ./update.sh > update.log 2> update.err < /dev/null &"
+    args = command.split(" ")
+    subprocess.Popen(args=args)
 
 # Define an error event
 @sio.event
