@@ -27,6 +27,11 @@ async def CAPTURE_IMAGE(sid, data):
     response = captureImage(x, y)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
+# Define a message event
+@sio.event
+async def PING(sid, data):
+    await sio.emit("Ping Response");
+
 # Define an error event
 @sio.event
 def event_error(sid, error):
