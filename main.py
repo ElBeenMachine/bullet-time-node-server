@@ -6,7 +6,7 @@ from utils import *
 import os
 import subprocess
 
-VERSION = "1.6.3"
+VERSION = "1.6.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
