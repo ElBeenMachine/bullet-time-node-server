@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 # Set up the camera
 from picamera2 import Picamera2
-cam = Picamera2(sensor_mode=0, brightness=50, contrast=0, saturation=0)
+cam = Picamera2()
 
 def captureImage(x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
     wait_state = True
