@@ -24,13 +24,9 @@ async def connect(sid, environ):
 async def CAPTURE_IMAGE(sid, data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
-    response = captureImage(x, y)
+    capture_time = data["captureTime"]
+    response = captureImage(x, y, time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
-
-# Define a message event
-@sio.event
-async def PING(sid, data):
-    await sio.emit("Ping Response");
 
 # Define an error event
 @sio.event
