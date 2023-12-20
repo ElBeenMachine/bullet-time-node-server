@@ -5,6 +5,8 @@ from aiohttp import web
 from utils import *
 import os
 import subprocess
+import asyncio
+import io
 
 VERSION = "1.6.4"
 
@@ -27,6 +29,35 @@ async def CAPTURE_IMAGE(sid, data):
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
     response = captureImage(x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
+
+# Stream event
+@sio.event
+async def START_STREAM(sid):
+
+    # Initialise stream to store encoded frames
+    stream = io.BytesIO
+
+    while True:
+        try:
+            # Rewind the stream for reading
+            stream.seek(0)
+            frameData = captureFrame(stream)
+
+            # Send the frame over socket
+            await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
+            await asyncio.sleep(0.1) # Rate limiting 
+            
+            # Reset the stream for the next frame
+            stream.seek(0)
+            stream.truncate()
+
+        except Exception as e:
+            print(f"Streaming error or user disconnected:{e}")
+            break
+
+        finally:
+            cam.close()
+            stream.close()
 
 # Define an error event
 @sio.event
