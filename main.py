@@ -7,6 +7,7 @@ import os
 import subprocess
 import asyncio
 import io
+import base64
 
 VERSION = "1.6.4"
 
@@ -39,9 +40,9 @@ async def START_STREAM(sid):
 
     while True:
         try:
-            # Rewind the stream for reading
+            # Rewind the stream for reading and encode to base64
             stream.seek(0)
-            frameData = captureFrame(stream)
+            frameData = base64.b64encode(captureFrame(stream))
 
             # Send the frame over socket
             await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
