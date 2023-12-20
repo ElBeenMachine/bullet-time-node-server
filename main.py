@@ -34,7 +34,6 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-
     # Initialise stream to store encoded frames
     stream = io.BytesIO
 
