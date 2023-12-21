@@ -28,9 +28,8 @@ async def connect(sid, environ):
 async def GET_NODE_DATA(sid):
     await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
-# Define a image capture event
-@sio.event
-async def CAPTURE_IMAGE(sid, data):
+# Function to capture
+async def capture(data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
@@ -39,10 +38,12 @@ async def CAPTURE_IMAGE(sid, data):
     
     camera_config = cam.create_preview_configuration(main={"size": (x, y)})
     cam.configure(camera_config)
+
+    # Calculate sleep time
+    sleep_time = (capture_time - datetime.now()).total_seconds()
     
-    # Do nothing until time has passed
-    while datetime.now() < capture_time:
-        print("Not Time")
+    # Sleep until it's time to capture
+    await asyncio.sleep(max(0, sleep_time))
             
     # Capture a picture from the source and process it into a Base64 String
     try:
@@ -58,6 +59,11 @@ async def CAPTURE_IMAGE(sid, data):
         print(f"🔴 | {e}")
     finally:
         cam.stop()
+
+# Define a image capture event
+@sio.event
+async def CAPTURE_IMAGE(sid, data):
+    asyncio.create_task(capture(data))
 
 # Stream event
 @sio.event
