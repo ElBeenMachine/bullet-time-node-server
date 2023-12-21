@@ -1,10 +1,11 @@
 # Import libraries
+import time
 import socketio
 import platform
 from aiohttp import web
 from utils import *
 import asyncio
-import time
+from datetime import datetime, timedelta
 
 VERSION = "1.7.3"
 
@@ -31,26 +32,27 @@ async def GET_NODE_DATA(sid):
 # Define a image capture event
 @sio.event
 async def CAPTURE_IMAGE(sid, data):
+    print("Capturing image")
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    response = captureImage(x, y, time=capture_time)
+    response = captureImage(cam, x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
+
 
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    start_time = time.time()
-    max_duration = 9
-
-    while time.time() - start_time < max_duration:
+    print("Starting Stream")
+    end_time = datetime.now() + timedelta(0, 7)
+    while datetime.now() < end_time:
         try:
             # Send the frame over socket
             await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-            await asyncio.sleep(0.1) # Rate limiting
+            await asyncio.sleep(0.5)
 
         except Exception as e:
-            print(f"Streaming error or user disconnected:{e}")
+            print(e)
             break
 
 # Define an error event
