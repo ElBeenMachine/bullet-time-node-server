@@ -37,7 +37,7 @@ async def CAPTURE_IMAGE(sid, data):
 @sio.event
 async def START_STREAM(sid):
     start_time = time.time()
-    max_duration = 5
+    max_duration = 9
 
     while time.time() - start_time < max_duration:
         try:
