@@ -20,7 +20,7 @@ cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 
 # Define a connection event
 @sio.event
-async def connect(sid, environ):
+async def connect(sid):
     print(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
 
 # Define a node data event
