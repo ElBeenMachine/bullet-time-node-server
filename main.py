@@ -66,6 +66,9 @@ async def LIVE_STREAM(sid):
         try:
             camera.start()
             stream = io.BytesIO()
+            
+            camera_config = cam.create_preview_configuration(main={"size": (1920, 1080)})
+            cam.configure(camera_config)
 
             for _ in camera.capture_continuous(stream, format="jpeg", use_video_port=True):
                 stream.seek(0)
@@ -73,8 +76,8 @@ async def LIVE_STREAM(sid):
                 stream.seek(0)
                 stream.truncate()
 
-        except:
-            print("Failure")
+        except Exception as e:
+            print(e)
         finally:
             camera.stop()
 
