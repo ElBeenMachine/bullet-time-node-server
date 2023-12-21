@@ -47,7 +47,7 @@ async def START_STREAM(sid):
         try:
             # Send the frame over socket
             await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-            await asyncio.sleep(0.1) # Rate limiting
+            await asyncio.sleep(0.5) # Rate limiting
 
         except Exception as e:
             print(f"Streaming error or user disconnected:{e}")
