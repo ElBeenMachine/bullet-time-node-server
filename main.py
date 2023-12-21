@@ -31,61 +31,21 @@ async def CAPTURE_IMAGE(sid, data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    response = captureImage(cam, x, y, time=capture_time)
+    response = captureImage(x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    # Initialise stream to store encoded frames, will ensure stream is instantiated before continuing
-    with io.BytesIO() as stream:
         while True:
             try:
-                # Rewind the stream for reading and encode to base64
-                stream.seek(0)
-                frameData = base64.b64encode(captureFrame(stream))
-
                 # Send the frame over socket
-                await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
-                await asyncio.sleep(0.1) # Rate limiting 
-                
-                # Reset the stream for the next frame
-                stream.seek(0)
-                stream.truncate()
+                await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+                await asyncio.sleep(0.1) # Rate limiting
 
             except Exception as e:
                 print(f"Streaming error or user disconnected:{e}")
                 break
-
-            finally:
-                cam.close()
-
-@sio.event
-async def LIVE_STREAM(sid):
-    with cam as camera:
-        try:
-            stream = io.BytesIO()
-
-            # Configure camera preview
-            camera_config = camera.create_preview_configuration(main={"size": (1920, 1080)})
-            camera.configure(camera_config)
-
-            # Start capturing
-            camera.start()
-
-            while True:
-                # Capture to an array (you can also capture to a file)
-                image_array = camera.capture_array("main")
-
-                # Emit the image data to the video stream
-                await sio.emit("VIDEO_STREAM", {"data": image_array})
-
-        except Exception as e:
-            print(e)
-        finally:
-            # Stop the camera
-            camera.stop()
-
 
 # Define an error event
 @sio.event
