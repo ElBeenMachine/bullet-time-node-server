@@ -46,8 +46,11 @@ async def START_STREAM(sid):
     while datetime.now() < end_time:
         try:
             # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-            time.sleep(1) # Rate limiting
+            # await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+            print(datetime.now())
+            print(end_time)
+            print("")
+            asyncio.sleep(0.5)
 
         except Exception as e:
             print(e)
