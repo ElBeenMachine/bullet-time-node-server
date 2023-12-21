@@ -9,7 +9,7 @@ import asyncio
 import io
 import base64
 
-VERSION = "1.6.4"
+VERSION = "1.7.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -35,7 +35,7 @@ async def CAPTURE_IMAGE(sid, data):
 @sio.event
 async def START_STREAM(sid):
     # Initialise stream to store encoded frames
-    stream = io.BytesIO
+    stream = io.BytesIO()
 
     while True:
         try:
