@@ -38,7 +38,7 @@ def captureFrame(stream):
     cam.start() 
 
     # Capture frame into stream
-    cam.capture_buffer(stream, use_video_port=True)
+    cam.capture_buffer(stream)
 
     # Load image from stream
     frameData = stream.read()
