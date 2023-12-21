@@ -43,11 +43,11 @@ async def CAPTURE_IMAGE(sid, data):
 @sio.event
 async def START_STREAM(sid):
     end_time = datetime.now() + timedelta(0, 9)
-    while end_time >= datetime.now():
+    while end_time > datetime.now():
         try:
             # Send the frame over socket
             await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-            await time.sleep(1) # Rate limiting
+            time.sleep(1) # Rate limiting
 
         except Exception as e:
             print(f"Streaming error or user disconnected:{e}")
