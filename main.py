@@ -63,15 +63,21 @@ async def START_STREAM(sid):
 @sio.event
 async def LIVE_STREAM(sid):
     with cam as camera:
-        camera.resolution(640, 480)
-        camera.framerate = 24
-        stream = io.BytesIO()
+        try:
+            camera.start()
+            stream = io.BytesIO()
 
-        for _ in camera.capture_continuous(stream, format="jpeg", use_video_port=True):
-            stream.seek(0)
-            sio.emit("VIDEO_STREAM", {"data": stream.read()})
-            stream.seek(0)
-            stream.truncate()
+            for _ in camera.capture_continuous(stream, format="jpeg", use_video_port=True):
+                stream.seek(0)
+                sio.emit("VIDEO_STREAM", {"data": stream.read()})
+                stream.seek(0)
+                stream.truncate()
+
+        except:
+            print("Failure")
+        finally:
+            camera.stop()
+
 
 # Define an error event
 @sio.event
