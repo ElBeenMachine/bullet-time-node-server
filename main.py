@@ -41,27 +41,16 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    global streaming
-    streaming = True
-    end_time = datetime.now() + timedelta(0, 15)
+    end_time = datetime.now() + timedelta(0, 9)
     while end_time >= datetime.now():
         try:
-            print(streaming)
-            if(streaming == True):
-                # Send the frame over socket
-                await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-                await asyncio.sleep(2) # Rate limiting
+            # Send the frame over socket
+            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+            await asyncio.sleep(1) # Rate limiting
 
         except Exception as e:
             print(f"Streaming error or user disconnected:{e}")
             break
-
-# Stop Stream Event
-@sio.event
-async def STOP_STREAM(sid):
-    print("Stopping stream")
-    global streaming
-    streaming = False
 
 # Define an error event
 @sio.event
