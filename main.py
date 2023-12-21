@@ -65,21 +65,27 @@ async def LIVE_STREAM(sid):
     with cam as camera:
         try:
             stream = io.BytesIO()
-            
-            camera_config = cam.create_preview_configuration(main={"size": (1920, 1080)})
-            cam.configure(camera_config)
-            
+
+            # Configure camera preview
+            camera_config = camera.create_preview_configuration(main={"size": (1920, 1080)})
+            camera.configure(camera_config)
+
+            # Start capturing
             camera.start()
 
-            for _ in camera.capture_continuous(stream, format="jpeg", use_video_port=True):
-                stream.seek(0)
-                sio.emit("VIDEO_STREAM", {"data": stream.read()})
-                stream.seek(0)
-                stream.truncate()
+            while True:
+                # Capture to an array (you can also capture to a file)
+                image_array = bytearray()
+                camera.capture(image_array, format='jpeg', use_video_port=True)
+                # Process the image array as needed
+                # ...
+                # Emit the image data to the video stream
+                sio.emit("VIDEO_STREAM", {"data": image_array})
 
         except Exception as e:
             print(e)
         finally:
+            # Stop the camera
             camera.stop()
 
 
