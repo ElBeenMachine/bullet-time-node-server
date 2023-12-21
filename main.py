@@ -37,21 +37,31 @@ async def CAPTURE_IMAGE(sid, data):
     response = captureImage(x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
+# Set streaming bool
+streaming = False
+
 # Stream event
 @sio.event
 async def START_STREAM(sid):
     start_time = time.time()
     max_duration = 9
+    streaming = True
 
     while time.time() - start_time < max_duration:
         try:
-            # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-            await asyncio.sleep(0.5) # Rate limiting
+            if(streaming == True):
+                # Send the frame over socket
+                await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+                await asyncio.sleep(0.5) # Rate limiting
 
         except Exception as e:
             print(f"Streaming error or user disconnected:{e}")
             break
+
+# Stop Stream Event
+@sio.event
+async def STOP_STREAM(sid):
+    streaming = False
 
 # Define an error event
 @sio.event
