@@ -3,18 +3,20 @@ import socketio
 import platform
 from aiohttp import web
 from utils import *
-import os
-import subprocess
 import asyncio
-import io
-import base64
+import time
 
-VERSION = "1.6.4"
+VERSION = "1.7.2"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
+
+# Set up the camera
+from picamera2 import Picamera2
+cam = Picamera2()
+cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 
 # Define a connection event
 @sio.event
@@ -34,30 +36,18 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    # Initialise stream to store encoded frames
-    stream = io.BytesIO
+    start_time = time.time()
+    max_duration = 9
 
-    while True:
+    while time.time() - start_time < max_duration:
         try:
-            # Rewind the stream for reading and encode to base64
-            stream.seek(0)
-            frameData = base64.b64encode(captureFrame(stream))
-
             # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
-            await asyncio.sleep(0.1) # Rate limiting 
-            
-            # Reset the stream for the next frame
-            stream.seek(0)
-            stream.truncate()
+            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+            await asyncio.sleep(0.1) # Rate limiting
 
         except Exception as e:
             print(f"Streaming error or user disconnected:{e}")
             break
-
-        finally:
-            cam.close()
-            stream.close()
 
 # Define an error event
 @sio.event
