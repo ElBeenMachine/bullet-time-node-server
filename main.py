@@ -6,7 +6,7 @@ from utils import *
 import asyncio
 import time
 
-VERSION = "1.7.2"
+VERSION = "1.7.3"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -22,9 +22,13 @@ cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 @sio.event
 async def connect(sid, environ):
     print(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
+
+# Define a node data event
+@sio.event
+async def GET_NODE_DATA(sid, environ):
     await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
-# Define a message event
+# Define a image capture event
 @sio.event
 async def CAPTURE_IMAGE(sid, data):
     x = data["resolution"]["x"]
