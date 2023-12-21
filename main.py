@@ -3,11 +3,10 @@ import time
 import socketio
 import platform
 from aiohttp import web
-from utils import *
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 
-VERSION = "1.7.3"
+VERSION = "1.8.0"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -29,31 +28,78 @@ async def connect(sid, environ):
 async def GET_NODE_DATA(sid):
     await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
-# Define a image capture event
-@sio.event
-async def CAPTURE_IMAGE(sid, data):
-    print("Capturing image")
+# Function to capture
+async def capture(data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    response = captureImage(cam, x, y, time=capture_time)
-    await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
+    print(f"🟠 | Capturing image at {capture_time}")
+    
+    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+    cam.configure(camera_config)
+
+    # Calculate sleep time
+    sleep_time = (capture_time - datetime.now()).total_seconds()
+    
+    # Sleep until it's time to capture
+    await asyncio.sleep(max(0, sleep_time))
+            
+    # Capture a picture from the source and process it into a Base64 String
+    try:
+        cam.start()
+        print("🟢 | Capturing image")
+        cam.capture_file("img.jpg")
+
+        # Open the image and return the data as a base64 encoded string
+        with open("img.jpg", "rb") as image_file:
+            data = image_file.read()
+            await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
+    except Exception as e:
+        print(f"🔴 | {e}")
+    finally:
+        cam.stop()
+
+# Define a image capture event
+@sio.event
+async def CAPTURE_IMAGE(sid, data):
+    asyncio.create_task(capture(data))
 
 # Stream event
 @sio.event
-async def START_STREAM(sid):
-    print("Starting Stream")
-    end_time = datetime.now() + timedelta(0, 7)
-    while datetime.now() < end_time:
-        try:
-            # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+async def START_STREAM(sid, data):
+    x = data["resolution"]["x"]
+    y = data["resolution"]["y"]
+    end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+
+    print(f"🟠 | Starting video stream to end at {end_time}")
+
+    # Configure camera
+    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+    cam.configure(camera_config)
+
+    # Configure video settings
+    cam.start()
+
+    try:
+        while datetime.now() < end_time:
+            # Capture frame into stream
+            cam.capture_file("live_frame.jpg")
+
+            # Open the image and return the data as a base64 encoded string
+            with open("live_frame.jpg", "rb") as image_file:
+                frame_data = image_file.read()
+                # Send the frame over socket
+                await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
+
+            # Wait half a second
             await asyncio.sleep(0.5)
 
-        except Exception as e:
-            print(e)
-            break
+    except Exception as e:
+        print(e)
+        
+    finally:
+        cam.stop()
 
 # Define an error event
 @sio.event
