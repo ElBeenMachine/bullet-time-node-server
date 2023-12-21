@@ -3,8 +3,7 @@ import socketio
 import platform
 from aiohttp import web
 from utils import *
-import os
-import subprocess
+import picamera2
 import asyncio
 import io
 import base64
