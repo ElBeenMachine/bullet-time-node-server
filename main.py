@@ -59,6 +59,7 @@ async def START_STREAM(sid):
 # Stop Stream Event
 @sio.event
 async def STOP_STREAM(sid):
+    print("Stopping stream")
     global streaming
     streaming = False
 
