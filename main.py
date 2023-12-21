@@ -3,7 +3,6 @@ import socketio
 import platform
 from aiohttp import web
 from utils import *
-import picamera2
 import asyncio
 import io
 import base64
@@ -14,6 +13,11 @@ VERSION = "1.7.1"
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
+
+# Set up the camera
+from picamera2 import Picamera2
+cam = Picamera2()
+cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 
 # Define a connection event
 @sio.event
@@ -27,7 +31,7 @@ async def CAPTURE_IMAGE(sid, data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    response = captureImage(x, y, time=capture_time)
+    response = captureImage(cam, x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
 # Stream event
@@ -58,7 +62,7 @@ async def START_STREAM(sid):
 
 @sio.event
 async def LIVE_STREAM(sid):
-    with picamera2.Picamera2() as camera:
+    with cam as camera:
         camera.resolution(640, 480)
         camera.framerate = 24
         stream = io.BytesIO()

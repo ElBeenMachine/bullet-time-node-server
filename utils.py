@@ -2,12 +2,7 @@
 import base64
 from datetime import datetime, timedelta
 
-# Set up the camera
-from picamera2 import Picamera2
-cam = Picamera2()
-cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
-
-def captureImage(x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
+def captureImage(cam, x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
     wait_state = True
     while wait_state:
         if time <= datetime.now():
@@ -31,7 +26,7 @@ def captureImage(x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
         cam.stop()
 
 
-def captureFrame(stream):
+def captureFrame(cam, stream):
     # Configure video settings
     cam.configure(cam.create_video_configuration())
     cam.resolution = (1920, 1080)
