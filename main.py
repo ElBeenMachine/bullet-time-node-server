@@ -58,7 +58,7 @@ async def START_STREAM(sid):
 
 @sio.event
 async def LIVE_STREAM(sid):
-        with picamera2.PiCamera() as camera:
+        with picamera2.PiCamera2() as camera:
             camera.resolution(640, 480)
             camera.framerate = 24
             stream = io.BytesIO()
