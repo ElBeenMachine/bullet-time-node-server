@@ -20,7 +20,6 @@ def captureImage(x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
         cam.start()
         print("🟢 | Capturing image")
         cam.capture_file("img.jpg")
-        cam.stop()
 
         # Open the image and return the data as a base64 encoded string
         with open("img.jpg", "rb") as image_file:
@@ -28,17 +27,18 @@ def captureImage(x = 1920, y = 1920, time = datetime.now() + timedelta(0, 10)):
             return data
     except Exception as e:
         print(f"🔴 | {e}")
+    finally:
+        cam.stop()
 
 
 def captureFrame(stream):
-
     # Configure video settings
     cam.configure(cam.create_video_configuration())
     cam.resolution = (1920, 1080)
     cam.start() 
 
     # Capture frame into stream
-    cam.capture(stream, format='jpeg', use_video_port=True)
+    cam.capture_buffer(stream, format='jpeg', use_video_port=True)
 
     # Load image from stream
     frameData = stream.read()

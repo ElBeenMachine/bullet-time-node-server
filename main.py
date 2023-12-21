@@ -34,29 +34,28 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    # Initialise stream to store encoded frames
-    stream = io.BytesIO()
+    # Initialise stream to store encoded frames, will ensure stream is instantiated before continuing
+    with io.BytesIO() as stream:
+        while True:
+            try:
+                # Rewind the stream for reading and encode to base64
+                stream.seek(0)
+                frameData = base64.b64encode(captureFrame(stream))
 
-    while True:
-        try:
-            # Rewind the stream for reading and encode to base64
-            stream.seek(0)
-            frameData = base64.b64encode(captureFrame(stream))
+                # Send the frame over socket
+                await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
+                await asyncio.sleep(0.1) # Rate limiting 
+                
+                # Reset the stream for the next frame
+                stream.seek(0)
+                stream.truncate()
 
-            # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": frameData})
-            await asyncio.sleep(0.1) # Rate limiting 
-            
-            # Reset the stream for the next frame
-            stream.seek(0)
-            stream.truncate()
+            except Exception as e:
+                print(f"Streaming error or user disconnected:{e}")
+                break
 
-        except Exception as e:
-            print(f"Streaming error or user disconnected:{e}")
-            break
-
-        finally:
-            cam.close()
+            finally:
+                cam.close()
 
 # Define an error event
 @sio.event
