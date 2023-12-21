@@ -20,12 +20,12 @@ cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 
 # Define a connection event
 @sio.event
-async def connect(sid):
+async def connect(sid, environ):
     print(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
 
 # Define a node data event
 @sio.event
-async def GET_NODE_DATA(sid, environ):
+async def GET_NODE_DATA(sid):
     await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
 # Define a image capture event
