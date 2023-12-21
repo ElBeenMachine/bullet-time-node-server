@@ -65,9 +65,11 @@ async def START_STREAM(sid, data):
     x = data["resolution"]["x"]
     y = data["resolution"]["y"]
     end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+
+    print(f"🟠 | Starting video stream to end at {end_time}")
     
     # Configure camera
-    camera_config = cam.create_preview_configuration(main={"size": (1920, 1080)})
+    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
     cam.configure(camera_config)
     
     # Configure video settings
