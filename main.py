@@ -4,10 +4,9 @@ import platform
 from aiohttp import web
 from utils import *
 import asyncio
-import io
-import base64
+import time
 
-VERSION = "1.7.1"
+VERSION = "1.7.2"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -37,15 +36,18 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-        while True:
-            try:
-                # Send the frame over socket
-                await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
-                await asyncio.sleep(0.1) # Rate limiting
+    start_time = time.time()
+    max_duration = 5
 
-            except Exception as e:
-                print(f"Streaming error or user disconnected:{e}")
-                break
+    while time.time() - start_time < max_duration:
+        try:
+            # Send the frame over socket
+            await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
+            await asyncio.sleep(0.1) # Rate limiting
+
+        except Exception as e:
+            print(f"Streaming error or user disconnected:{e}")
+            break
 
 # Define an error event
 @sio.event
