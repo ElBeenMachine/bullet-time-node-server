@@ -29,12 +29,12 @@ def captureImage(cam, x = 1920, y = 1920, time = datetime.now() + timedelta(0, 1
 def captureFrame(cam):
     try:
         # Configure camera
-        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+        camera_config = cam.create_preview_configuration(main={"size": (1920, 1080)})
         cam.configure(camera_config)
         
         # Configure video settings
         cam.start() 
-        
+
         # Capture frame into stream
         cam.capture_file("live_frame.jpg")
         
