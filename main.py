@@ -76,8 +76,7 @@ async def LIVE_STREAM(sid):
             while True:
                 # Capture to an array (you can also capture to a file)
                 image_array = camera.capture_array("main")
-                # Process the image array as needed
-                print(image_array.shape)
+                
                 # Emit the image data to the video stream
                 sio.emit("VIDEO_STREAM", {"data": image_array})
 
