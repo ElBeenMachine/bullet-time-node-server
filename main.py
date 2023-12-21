@@ -42,7 +42,7 @@ async def CAPTURE_IMAGE(sid, data):
     
     # Do nothing until time has passed
     while datetime.now() < capture_time:
-        continue
+        print("Not Time")
             
     # Capture a picture from the source and process it into a Base64 String
     try:
