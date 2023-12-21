@@ -3,7 +3,6 @@ import time
 import socketio
 import platform
 from aiohttp import web
-from utils import *
 import asyncio
 from datetime import datetime
 
