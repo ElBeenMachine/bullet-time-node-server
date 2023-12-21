@@ -4,7 +4,7 @@ import platform
 from aiohttp import web
 from utils import *
 import asyncio
-import time
+from datetime import datetime, timedelta
 
 VERSION = "1.7.3"
 
@@ -37,18 +37,16 @@ async def CAPTURE_IMAGE(sid, data):
     response = captureImage(x, y, time=capture_time)
     await sio.emit("IMAGE_DATA", {"image_data": response, "node_name": platform.node()})
 
-# Set streaming bool
-streaming = False
 
 # Stream event
 @sio.event
 async def START_STREAM(sid):
-    start_time = time.time()
-    max_duration = 9
+    global streaming
     streaming = True
-
-    while time.time() - start_time < max_duration:
+    end_time = datetime.now() + timedelta(0, 15)
+    while end_time >= datetime.now():
         try:
+            print(streaming)
             if(streaming == True):
                 # Send the frame over socket
                 await sio.emit("VIDEO_FRAME", {"frame_data": captureFrame(cam=cam)})
@@ -61,6 +59,7 @@ async def START_STREAM(sid):
 # Stop Stream Event
 @sio.event
 async def STOP_STREAM(sid):
+    global streaming
     streaming = False
 
 # Define an error event
