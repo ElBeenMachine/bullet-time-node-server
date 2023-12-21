@@ -25,7 +25,7 @@ async def connect(sid, environ):
 
 # Define a node data event
 @sio.event
-async def GET_NODE_DATA(sid, environ):
+async def GET_NODE_DATA(sid):
     await sio.emit("NODE_DATA", { "node": platform.node(), "version": VERSION })
 
 # Define a image capture event
