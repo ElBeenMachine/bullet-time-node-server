@@ -64,11 +64,12 @@ async def START_STREAM(sid):
 async def LIVE_STREAM(sid):
     with cam as camera:
         try:
-            camera.start()
             stream = io.BytesIO()
             
             camera_config = cam.create_preview_configuration(main={"size": (1920, 1080)})
             cam.configure(camera_config)
+            
+            camera.start()
 
             for _ in camera.capture_continuous(stream, format="jpeg", use_video_port=True):
                 stream.seek(0)
