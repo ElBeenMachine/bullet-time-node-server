@@ -57,7 +57,6 @@ async def START_STREAM(sid):
 
         finally:
             cam.close()
-            stream.close()
 
 # Define an error event
 @sio.event
