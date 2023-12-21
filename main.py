@@ -6,7 +6,7 @@ from aiohttp import web
 import asyncio
 from datetime import datetime
 
-VERSION = "1.7.3"
+VERSION = "1.8.0"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
