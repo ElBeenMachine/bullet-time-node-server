@@ -7,7 +7,7 @@ import asyncio
 from datetime import datetime
 from utils import *
 
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -31,7 +31,6 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-    
     # Configure capture settings
     cam = setCaptureSpec(cam,data)
     
