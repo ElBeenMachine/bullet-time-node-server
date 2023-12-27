@@ -6,6 +6,9 @@ import asyncio
 from datetime import datetime
 from picamera2 import Picamera2
 
+# Initialise camera instance
+cam = Picamera2()
+
 def setCaptureSpec(data,capture_mode):
     # Set default values
     x = 1920
@@ -13,9 +16,6 @@ def setCaptureSpec(data,capture_mode):
     iso = 100
     shutterSpeed = 1000 
     
-    # Initialise camera instance
-    cam = Picamera2()
-
     # Store camera settings if specified 
     if 'resolution' in data:
         resolution = data["resolution"]
