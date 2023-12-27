@@ -15,9 +15,6 @@ def setCaptureSpec(data,capture_mode):
     y = 1080
     iso = 100
     shutterSpeed = 1000 
-
-    print(data)
-    print(x, y, iso, shutterSpeed)
     
     # Store camera settings if specified 
     if 'resolution' in data:
