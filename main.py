@@ -5,6 +5,7 @@ import platform
 from aiohttp import web
 import asyncio
 from datetime import datetime
+from utils import *
 
 VERSION = "1.8.0"
 
@@ -13,10 +14,10 @@ sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
-# Set up the camera
+# Initialise camera instance
 from picamera2 import Picamera2
 cam = Picamera2()
-cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
+
 
 # Define a connection event
 @sio.event
@@ -30,15 +31,13 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-    x = data["resolution"]["x"]
-    y = data["resolution"]["y"]
+    
+    # Configure capture settings
+    cam = setCaptureSpec(cam,data)
+    
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-
     print(f"🟠 | Capturing image at {capture_time}")
     
-    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-    cam.configure(camera_config)
-
     # Calculate sleep time
     sleep_time = (capture_time - datetime.now()).total_seconds()
     
