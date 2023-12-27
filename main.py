@@ -8,7 +8,6 @@ sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
-
 # Define a connection event
 @sio.event
 async def connect(sid, environ):
@@ -21,14 +20,22 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
+    # Get current time
+    current_time = datetime.now()
+
     # Configure capture settings
     cam = setCaptureSpec(data,'STILL')
-    
-    capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+
+    # Determine Capture Time
+    if data["time"] is None:
+        capture_time = current_time
+    else:
+        capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+
     print(f"🟠 | Capturing image at {capture_time}")
     
     # Calculate sleep time
-    sleep_time = (capture_time - datetime.now()).total_seconds()
+    sleep_time = (capture_time - current_time).total_seconds()
     
     # Sleep until it's time to capture
     await asyncio.sleep(max(0, sleep_time))
@@ -57,9 +64,15 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid, data):
+    # Get current time
+    current_time = datetime.now()
 
     # Determine length of video stream
-    end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    if data["time"] is None:
+        end_time = current_time
+    else:
+        end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
