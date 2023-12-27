@@ -1,31 +1,53 @@
+import time
+import socketio
+import platform
+from aiohttp import web
+import asyncio
+from datetime import datetime
+from picamera2 import Picamera2
+
 # Set default values
 x = 1920
 y = 1080
 iso = 100
 shutterSpeed = 1000 
 
-def setCaptureSpec(cam,data):
+def setCaptureSpec(data,capture_mode):
 
-    # Set resolution if specified
+    # Initialise camera instance
+    cam = Picamera2()
+
+    # Store camera settings if specified 
     if 'resolution' in data:
         resolution = data["resolution"]
         if 'x' in resolution and 'y' in resolution:
             x = resolution["x"]
             y = resolution["y"]
 
-    # Set iso if specified
     if 'iso' in data:
         if data["iso"]:
             iso = data["iso"]
-        
-    # Set shutter speed if specified
+            
     if 'shutter_speed' in data:
         if data["shutter_speed"]:
             shutterSpeed = data["shutter_speed"]
+     
+
+    # Determine capture mode
+    if capture_mode == 'STILL':
+        camera_config = cam.create_still_configuration(main={"size": (x, y)})
+        print(f"🟠 | Camera configured for still capture") 
+
+    if capture_mode == 'STREAM':
+        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+        print(f"🟠 | Camera configured for video stream") 
+
 
     # Apply settings
-    camera_config = cam.create_still_configuration(main={"size": (x, y)})
     cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
-
     cam.configure(camera_config)
+    print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
+
+    
+
     return cam

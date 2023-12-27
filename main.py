@@ -1,22 +1,12 @@
 # Import libraries
-import time
-import socketio
-import platform
-from aiohttp import web
-import asyncio
-from datetime import datetime
 from utils import *
 
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
-
-# Initialise camera instance
-from picamera2 import Picamera2
-cam = Picamera2()
 
 
 # Define a connection event
@@ -33,7 +23,7 @@ async def GET_NODE_DATA(sid):
 async def capture(data):
     
     # Configure capture settings
-    cam = setCaptureSpec(cam,data)
+    cam = setCaptureSpec(data,'STILL')
     
     capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
     print(f"🟠 | Capturing image at {capture_time}")
@@ -58,6 +48,7 @@ async def capture(data):
         print(f"🔴 | {e}")
     finally:
         cam.stop()
+        print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -67,17 +58,13 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid, data):
-    x = data["resolution"]["x"]
-    y = data["resolution"]["y"]
-    end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
+    # Determine length of video stream
+    end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
     print(f"🟠 | Starting video stream to end at {end_time}")
 
-    # Configure camera
-    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-    cam.configure(camera_config)
-
     # Configure video settings
+    cam = setCaptureSpec(data,'STREAM')
     cam.start()
 
     try:
@@ -99,6 +86,7 @@ async def START_STREAM(sid, data):
         
     finally:
         cam.stop()
+        print(f"🟠 | Camera instance closed")
 
 # Define an error event
 @sio.event
