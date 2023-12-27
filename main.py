@@ -1,22 +1,12 @@
 # Import libraries
-import time
-import socketio
-import platform
-from aiohttp import web
-import asyncio
-from datetime import datetime
+from utils import *
 
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
-
-# Set up the camera
-from picamera2 import Picamera2
-cam = Picamera2()
-cam.set_controls({"ExposureTime": 1000, "AnalogueGain": 1.0})
 
 # Define a connection event
 @sio.event
@@ -30,17 +20,22 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-    x = data["resolution"]["x"]
-    y = data["resolution"]["y"]
-    capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    # Get current time
+    current_time = datetime.now()
+
+    # Configure capture settings
+    cam = setCaptureSpec(data,'STILL')
+
+    # Determine Capture Time
+    if data["time"] is None:
+        capture_time = current_time
+    else:
+        capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
     print(f"🟠 | Capturing image at {capture_time}")
     
-    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-    cam.configure(camera_config)
-
     # Calculate sleep time
-    sleep_time = (capture_time - datetime.now()).total_seconds()
+    sleep_time = (capture_time - current_time).total_seconds()
     
     # Sleep until it's time to capture
     await asyncio.sleep(max(0, sleep_time))
@@ -59,6 +54,7 @@ async def capture(data):
         print(f"🔴 | {e}")
     finally:
         cam.stop()
+        print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -68,17 +64,19 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid, data):
-    x = data["resolution"]["x"]
-    y = data["resolution"]["y"]
-    end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    # Get current time
+    current_time = datetime.now()
 
+    # Determine length of video stream
+    if data["time"] is None:
+        end_time = current_time
+    else:
+        end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    
     print(f"🟠 | Starting video stream to end at {end_time}")
 
-    # Configure camera
-    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-    cam.configure(camera_config)
-
     # Configure video settings
+    cam = setCaptureSpec(data,'STREAM')
     cam.start()
 
     try:
@@ -100,6 +98,7 @@ async def START_STREAM(sid, data):
         
     finally:
         cam.stop()
+        print(f"🟠 | Camera instance closed")
 
 # Define an error event
 @sio.event
