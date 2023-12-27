@@ -22,16 +22,16 @@ def setCaptureSpec(data,capture_mode):
     # Store camera settings if specified 
     if 'resolution' in data:
         resolution = data["resolution"]
-        if 'x' in resolution and 'y' in resolution:
+        if resolution['x'] is not None and resolution['y'] is not None:
             x = resolution["x"]
             y = resolution["y"]
 
     if 'iso' in data:
-        if data["iso"]:
+        if data["iso"] is not None:
             iso = data["iso"]
             
     if 'shutter_speed' in data:
-        if data["shutter_speed"]:
+        if data["shutter_speed"] is not None:
             shutterSpeed = data["shutter_speed"]
 
     # Determine capture mode
