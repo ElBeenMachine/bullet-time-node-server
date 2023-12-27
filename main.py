@@ -21,7 +21,6 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-    
     # Configure capture settings
     cam = setCaptureSpec(data,'STILL')
     
