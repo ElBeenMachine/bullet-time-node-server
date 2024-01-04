@@ -33,7 +33,7 @@ def setCaptureSpec(data,capture_mode):
 
     # Determine capture mode
     if capture_mode == 'STILL':
-        camera_config = cam.create_still_configuration(main={"size": (x, y)})
+        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
         print(f"🟠 | Camera configured for still capture") 
 
     if capture_mode == 'STREAM':
