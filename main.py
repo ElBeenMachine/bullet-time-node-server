@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "1.9.3"
+VERSION = "1.9.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
