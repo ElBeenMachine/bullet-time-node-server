@@ -91,7 +91,7 @@ async def START_STREAM(sid, data):
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
 
             # Rate Limit
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.25)
 
     except Exception as e:
         print(e)
