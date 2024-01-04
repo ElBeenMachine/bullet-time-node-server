@@ -3,7 +3,7 @@ from utils import *
 import subprocess
 import os
 
-VERSION = "1.9.6"
+VERSION = "1.9.7"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
