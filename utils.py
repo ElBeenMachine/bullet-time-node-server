@@ -32,13 +32,8 @@ def setCaptureSpec(data,capture_mode):
             shutterSpeed = data["shutter_speed"]
 
     # Determine capture mode
-    if capture_mode == 'STILL':
-        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-        print(f"🟠 | Camera configured for still capture") 
-
-    if capture_mode == 'STREAM':
-        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-        print(f"🟠 | Camera configured for video stream") 
+    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+    print(f"🟠 | Camera configured for capture") 
 
     # Apply settings
     cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
