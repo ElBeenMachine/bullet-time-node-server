@@ -1,5 +1,7 @@
 # Import libraries
 from utils import *
+import subprocess
+import os
 
 VERSION = "1.9.5"
 
@@ -99,6 +101,18 @@ async def START_STREAM(sid, data):
     finally:
         cam.stop()
         print(f"🟠 | Camera instance closed")
+
+@sio.event
+def UPDATE():
+    try:
+        # Run the update script in the background
+        subprocess.Popen(["nohup ./update.sh &> /dev/null &"], shell=True)
+        print("🟢 | Update script started in the background.")
+        
+        # Exit the current process
+        os._exit(0)
+    except Exception as e:
+        print(f"🔴 | Failed to start update script: {e}")
 
 # Define an error event
 @sio.event
