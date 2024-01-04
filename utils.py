@@ -36,7 +36,8 @@ def setCaptureSpec(data):
     print(f"🟠 | Camera configured for capture") 
 
     # Apply settings
-    cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
+    cam.set_controls({"ExposureTime": shutterSpeed})
+    # cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
     cam.configure(camera_config)
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
 
