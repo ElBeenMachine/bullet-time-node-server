@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "1.9.5"
+VERSION = "1.9.6"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -45,6 +45,8 @@ async def capture(data):
         cam.start()
         print("🟢 | Capturing image")
         cam.capture_file("img.jpg")
+
+        remove_green("img.jpg")
 
         # Open the image and return the data as a base64 encoded string
         with open("img.jpg", "rb") as image_file:
