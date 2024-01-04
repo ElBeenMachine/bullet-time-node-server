@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "1.9.1"
+VERSION = "1.9.2"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -24,7 +24,7 @@ async def capture(data):
     current_time = datetime.now()
 
     # Configure capture settings
-    cam = setCaptureSpec(data,'STILL')
+    cam = setCaptureSpec(data)
 
     # Determine Capture Time
     if data["time"] is None:
@@ -76,7 +76,7 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    cam = setCaptureSpec(data,'STREAM')
+    cam = setCaptureSpec(data)
     cam.start()
 
     try:

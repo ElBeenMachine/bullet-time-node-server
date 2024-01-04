@@ -9,7 +9,7 @@ from picamera2 import Picamera2
 # Initialise camera instance
 cam = Picamera2()
 
-def setCaptureSpec(data,capture_mode):
+def setCaptureSpec(data):
     # Set default values
     x = 1920
     y = 1080
