@@ -1,4 +1,4 @@
-echo This wizard will run you through the setup of the bullet-time node server
+echo "This wizard will run you through the setup of the bullet-time node server"
 
 echo "What is the ID of this node (101 - 150)"
 read nodeNum
@@ -9,7 +9,7 @@ echo "============ System Configuration (10.0.0.$nodeNum) ============"
 
 echo ""
 
-echo Updating system
+echo "Updating system"
 sudo apt-get update -y && sudo apt-get upgrade -y
 
 sudo hostnamectl set-hostname btns-node-$nodeNum
@@ -20,7 +20,7 @@ echo "::1             localhost ip6-localhost ip6-loopback" | tee -a /etc/hosts
 echo "ff02::1         ip6-allnodes" | tee -a /etc/hosts
 echo "ff02::2         ip6-allrouters" | tee -a /etc/hosts
 
-echo Hostname set to btns-node-$nodeNum
+echo "Hostname set to btns-node-$nodeNum"
 
 mkdir -p /etc/network/interfaces.d
 

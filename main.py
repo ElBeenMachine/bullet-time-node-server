@@ -106,7 +106,7 @@ async def START_STREAM(sid, data):
 def UPDATE():
     try:
         # Run the update script in the background
-        subprocess.Popen(["nohup ./update.sh &> /dev/null &"], shell=True)
+        os.system("cd ~/btns && nohup ./update.sh &> /dev/null &")
         print("🟢 | Update script started in the background.")
         
         # Exit the current process

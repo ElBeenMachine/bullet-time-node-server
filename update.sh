@@ -1,3 +1,5 @@
+echo "Switching to non-production directory"
+
 echo "Updating Repository"
 
 echo "Stopping running service"
