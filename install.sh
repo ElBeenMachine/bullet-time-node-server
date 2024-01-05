@@ -24,7 +24,9 @@ systemctl status bulletTime.service
 
 sudo apt autoremove -y
 
+echo ""
+
 echo "==================== Setting Permissions ====================="
 cd ../
 sudo chown -R admin:admin ./btns
-echo "Permissions Set"
+echo "Permissions successfully set"

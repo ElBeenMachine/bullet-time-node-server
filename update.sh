@@ -10,7 +10,6 @@ sudo systemctl disable bulletTime
 
 echo "Pulling latest production build from GitHub"
 git stash
-git stash drop
 git checkout production
 git pull
 

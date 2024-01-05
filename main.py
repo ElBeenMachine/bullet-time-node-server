@@ -3,7 +3,7 @@ from utils import *
 import subprocess
 import os
 
-VERSION = "1.9.7"
+VERSION = "1.9.8"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -103,7 +103,7 @@ async def START_STREAM(sid, data):
         print(f"🟠 | Camera instance closed")
 
 @sio.event
-def UPDATE():
+def UPDATE(sid):
     try:
         # Run the update script in the background
         os.system("cd ~/btns && nohup ./update.sh &> /dev/null &")
