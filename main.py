@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.1.3"
+VERSION = "2.0.1.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -61,7 +61,72 @@ async def capture(data):
 async def CAPTURE_IMAGE(sid, data):
     asyncio.create_task(capture(data))
 
-# Stream event
+# Define stream event
+@sio.event
+async def START_STREAM(sid, data):
+
+    # Get current time
+    current_time = datetime.now()
+
+    # Determine length of video stream
+    if data["time"] is None:
+        end_time = current_time
+    else:
+        end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
+    
+    print(f"🟠 | Starting video stream to end at {end_time}")
+
+    # Configure video settings
+    cam = setCaptureSpec(data,"STREAM")
+
+    try:
+        while datetime.now() < end_time:
+            # Capture frame into stream
+            cam.start()
+            cam.capture_file("live_frame.jpg")
+
+            # Open the image and return the data as a base64 encoded string
+            with open("live_frame.jpg", "rb") as image_file:
+                frame_data = image_file.read()
+                # Send the frame over socket
+                await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
+
+            # Rate Limit
+            await asyncio.sleep(0.0016)
+
+    except Exception as e:
+        print(e)
+        
+    finally:
+        cam.stop()
+        print(f"🟠 | Camera instance closed")
+
+
+@sio.event
+def UPDATE(sid):
+    try:
+        # Run the update script in the background
+        os.system("cd ~/btns && nohup ./update.sh &> /dev/null &")
+        print("🟢 | Update script started in the background.")
+        
+        # Exit the current process
+        os._exit(0)
+    except Exception as e:
+        print(f"🔴 | Failed to start update script: {e}")
+
+# Define an error event
+@sio.event
+def event_error(sid, error):
+    print(f"Error from {sid}: {error}")
+
+# Set the port for the Socket.IO server
+if __name__ == '__main__':
+    port = 8080
+    web.run_app(app, port=port)
+
+"""
+        
+        # Stream event
 @sio.event
 async def START_STREAM(sid, data):
 
@@ -100,65 +165,4 @@ async def START_STREAM(sid, data):
         
     finally:
         cam.stop_encoder()
-        print(f"🟠 | Camera instance closed")
-
-@sio.event
-def UPDATE(sid):
-    try:
-        # Run the update script in the background
-        os.system("cd ~/btns && nohup ./update.sh &> /dev/null &")
-        print("🟢 | Update script started in the background.")
-        
-        # Exit the current process
-        os._exit(0)
-    except Exception as e:
-        print(f"🔴 | Failed to start update script: {e}")
-
-# Define an error event
-@sio.event
-def event_error(sid, error):
-    print(f"Error from {sid}: {error}")
-
-# Set the port for the Socket.IO server
-if __name__ == '__main__':
-    port = 8080
-    web.run_app(app, port=port)
-
-"""@sio.event
-async def START_STREAM(sid, data):
-
-    # Get current time
-    current_time = datetime.now()
-
-    # Determine length of video stream
-    if data["time"] is None:
-        end_time = current_time
-    else:
-        end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    
-    print(f"🟠 | Starting video stream to end at {end_time}")
-
-    # Configure video settings
-    cam = setCaptureSpec(data,"STREAM")
-
-    try:
-        while datetime.now() < end_time:
-            # Capture frame into stream
-            cam.start()
-            cam.capture_file("live_frame.jpg")
-
-            # Open the image and return the data as a base64 encoded string
-            with open("live_frame.jpg", "rb") as image_file:
-                frame_data = image_file.read()
-                # Send the frame over socket
-                await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
-
-            # Rate Limit
-            await asyncio.sleep(0.0016)
-
-    except Exception as e:
-        print(e)
-        
-    finally:
-        cam.stop()
         print(f"🟠 | Camera instance closed")"""
