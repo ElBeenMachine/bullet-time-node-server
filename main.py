@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.2.4"
+VERSION = "2.0.2.5"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -24,9 +24,6 @@ async def capture(data):
     # Get current time
     current_time = datetime.now()
 
-    # Configure capture settings
-    cam = getCaptureSpec(data,"STILL")
-    
     # Determine Capture Time
     if data["time"] is None:
         capture_time = current_time
@@ -42,20 +39,23 @@ async def capture(data):
     await asyncio.sleep(max(0, sleep_time))
             
     # Capture a picture from the source and process it into a Base64 String
-    try:
-        cam.start()
-        print("🟢 | Capturing image")
-        cam.capture_file("img.jpg")
+    async with camera_lock: 
+        # Configure capture settings
+        cam = getCaptureSpec(data,"STILL")
+        try:
+            cam.start()
+            print("🟢 | Capturing image")
+            cam.capture_file("img.jpg")
 
-        # Open the image and return the data as a base64 encoded string
-        with open("img.jpg", "rb") as image_file:
-            data = image_file.read()
-            await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
-    except Exception as e:
-        print(f"🔴 | {e}")
-    finally:
-        cam.stop()
-        print(f"🟠 | Camera instance closed")
+            # Open the image and return the data as a base64 encoded string
+            with open("img.jpg", "rb") as image_file:
+                data = image_file.read()
+                await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
+        except Exception as e:
+            print(f"🔴 | {e}")
+        finally:
+            cam.stop()
+            print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -77,33 +77,31 @@ async def START_STREAM(sid, data):
     
     print(f"🟠 | Starting video stream to end at {end_time}")
 
-    # Wait for 3 seconds to allow any other routes using camera instance to finish
-    await asyncio.sleep(3)
+    # Ensures camera is available before use
+    async with camera_lock:
+        # Configure video settings
+        cam = await getCaptureSpec(data,"STREAM")
+        try:
+            while datetime.now() < end_time:
+                # Capture frame into stream
+                cam.start()
+                cam.capture_file("live_frame.jpg")
 
-    # Configure video settings
-    cam = getCaptureSpec(data,"STREAM")
+                # Open the image and return the data as a base64 encoded string
+                with open("live_frame.jpg", "rb") as image_file:
+                    frame_data = image_file.read()
+                    # Send the frame over socket
+                    await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
 
-    try:
-        while datetime.now() < end_time:
-            # Capture frame into stream
-            cam.start()
-            cam.capture_file("live_frame.jpg")
+                # Rate Limit
+                await asyncio.sleep(0.0016)
 
-            # Open the image and return the data as a base64 encoded string
-            with open("live_frame.jpg", "rb") as image_file:
-                frame_data = image_file.read()
-                # Send the frame over socket
-                await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
-
-            # Rate Limit
-            await asyncio.sleep(0.0016)
-
-    except Exception as e:
-        print(e)
-        
-    finally:
-        cam.stop()
-        print(f"🟠 | Camera instance closed")
+        except Exception as e:
+            print(e)
+            
+        finally:
+            cam.stop()
+            print(f"🟠 | Camera instance closed")
 
 
 @sio.event

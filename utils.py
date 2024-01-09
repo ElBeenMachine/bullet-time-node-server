@@ -15,6 +15,9 @@ import os
 # Initialise camera instance
 cam = Picamera2() 
 
+# Camera lock to ensure its only used by one route at a time
+camera_lock = asyncio.Lock()
+
 def getCaptureSpec(data,capture_mode):
     
     # Set default values
@@ -42,6 +45,7 @@ def getCaptureSpec(data,capture_mode):
         "ExposureTime": shutterSpeed
     }        
 
+    # Default capture setting
     camera_config = cam.create_preview_configuration(main={"size": (resolution["x"], resolution["y"])})
                                                      
     # Apply settings
@@ -50,6 +54,7 @@ def getCaptureSpec(data,capture_mode):
         cam.options['quality'] = 30
             
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
+   
     cam.configure(camera_config) 
     cam.set_controls({"ExposureTime": shutterSpeed})
     
