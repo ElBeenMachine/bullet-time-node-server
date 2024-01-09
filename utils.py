@@ -5,6 +5,8 @@ from aiohttp import web
 import asyncio
 from datetime import datetime
 from picamera2 import Picamera2
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import FileOutput
 
 # Initialise camera instance
 cam = Picamera2()

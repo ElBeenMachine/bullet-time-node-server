@@ -27,7 +27,7 @@ async def capture(data):
 
     # Configure capture settings
     cam = setCaptureSpec(data)
-    cam.start()
+    
 
     # Determine Capture Time
     if data["time"] is None:
@@ -45,7 +45,7 @@ async def capture(data):
             
     # Capture a picture from the source and process it into a Base64 String
     try:
-        #cam.start()
+        cam.start()
         print("🟢 | Capturing image")
         cam.capture_file("img.jpg")
 
