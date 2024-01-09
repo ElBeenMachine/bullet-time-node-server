@@ -11,7 +11,11 @@ from picamera2.outputs import CircularOutput
 import subprocess
 import os
 
-cameraSettings = Picamera2()
+# Initialise camera instance
+try:
+    cam = Picamera2() 
+except Exception:
+    print("Error opening camera instance")  
     
 def getCaptureSpec(data,capture_mode):
     
@@ -34,26 +38,24 @@ def getCaptureSpec(data,capture_mode):
             
     if 'shutter_speed' in data:
         if data["shutter_speed"] is not None:
-            shutterSpeed = data["shutter_speed"]
+            shutterSpeed = data["shutter_speed"] 
 
-    # Determine capture mode
+    controls = {
+        "ExposureTime": shutterSpeed
+    }        
+
+    # Apply settings
+    if capture_mode == "STREAM":        
+            cam.configure(cam.create_video_configuration(main={"size": (1920, 1080)}))
+            cam.options['quality'] = 30
+    
     if capture_mode == "STILL":
-        camera_config = cameraSettings.create_preview_configuration(main={"size": (x, y)})
-        print(f"🟠 | Camera configured for still capture") 
-
-    if capture_mode == "STREAM":
-        camera_config = cameraSettings.create_video_configuration({"size": (1920,1080)}) # CHange back to dynamic assignment after test
-        print(f"🟠 | Camera configured for video stream") 
-        
+            cam.configure(cam.create_preview_configuration(main={"size": (resolution["x"], resolution["y"])}))
     
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
-
-    settings = {
-        "config" : camera_config,
-        "controls" : {"ExposureTime": shutterSpeed}
-    }
-
-    return settings
+    cam.set_controls(controls)
+    
+    return cam
 
 #cam.set_controls({"ExposureTime": shutterSpeed})
 #cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})

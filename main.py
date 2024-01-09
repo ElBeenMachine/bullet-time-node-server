@@ -8,9 +8,7 @@ sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
-# Initialise camera instance
-cam = Picamera2() 
-
+  
 
 # Define a connection event
 @sio.event
@@ -29,11 +27,7 @@ async def capture(data):
     current_time = datetime.now()
 
     # Configure capture settings
-    settings = getCaptureSpec(data,"STILL")
-
-    # Apply settings
-    cam.configure(settings["config"])
-    cam.set_controls(settings["controls"])
+    cam = getCaptureSpec(data,"STILL")
     
     # Determine Capture Time
     if data["time"] is None:
@@ -73,7 +67,6 @@ async def CAPTURE_IMAGE(sid, data):
 # Define stream event
 @sio.event
 async def START_STREAM(sid, data):
-
     
     # Get current time
     current_time = datetime.now()
@@ -87,11 +80,7 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    settings = getCaptureSpec(data,"STREAM")
-
-    cam.configure(settings["config"])
-    cam.set_controls(settings["controls"])
-    cam.options['quality'] = 30
+    cam = getCaptureSpec(data,"STREAM")
 
     try:
         while datetime.now() < end_time:
