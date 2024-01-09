@@ -3,7 +3,7 @@ from utils import *
 import subprocess
 import os
 
-VERSION = "1.9.9"
+VERSION = "2.0.0"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -66,8 +66,7 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid, data):
-    fps = 30
-    duration = 6
+
     # Get current time
     current_time = datetime.now()
 
@@ -81,22 +80,17 @@ async def START_STREAM(sid, data):
 
     # Configure video settings
     cam = setCaptureSpec(data,"STREAM")
-    cam.encoders = encoder
 
-    #cam.start()
-
-    output = CircularOutput(buffersize=int(fps * (duration + 0.2)), outputtofile=False)
-    output.fileoutput = "file.h264"
-    cam.start_recording(encoder, output)
+    encoder.output = FileOutput(f"frame.h264")
 
     try:
         while datetime.now() < end_time:
             # Capture frame into stream
-            
+            cam.start_encoder(encoder)
             #cam.capture_file("live_frame.jpg")
 
             # Open the image and return the data as a base64 encoded string
-            with open("file.h264", "rb") as image_file:
+            with open("frame.h264", "rb") as image_file:
                 frame_data = image_file.read()
                 # Send the frame over socket
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
@@ -108,7 +102,7 @@ async def START_STREAM(sid, data):
         print(e)
         
     finally:
-        cam.stop()
+        cam.stop_encoder()
         print(f"🟠 | Camera instance closed")
 
 @sio.event
