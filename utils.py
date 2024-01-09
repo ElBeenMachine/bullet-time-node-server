@@ -8,6 +8,8 @@ from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
+import subprocess
+import os
 
 encoder = H264Encoder(1000000)
 
