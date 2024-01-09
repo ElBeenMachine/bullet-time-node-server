@@ -14,10 +14,11 @@ import io
 
 encoder = H264Encoder(1000000)
 
-# Initialise camera instance
-cam = Picamera2()
+
 
 def setCaptureSpec(data,capture_mode):
+    # Initialise camera instance
+    cam = Picamera2()
     # Set default values
     x = 1920
     y = 1080
