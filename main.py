@@ -8,8 +8,6 @@ sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
-# Initialise camera instance
-cam = Picamera2()  
 
 # Define a connection event
 @sio.event
@@ -23,6 +21,10 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
+
+    # Initialise camera instance
+    cam = Picamera2()  
+
     # Get current time
     current_time = datetime.now()
 
@@ -57,6 +59,7 @@ async def capture(data):
         print(f"🔴 | {e}")
     finally:
         cam.stop()
+        cam.close()
         print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
@@ -68,6 +71,8 @@ async def CAPTURE_IMAGE(sid, data):
 @sio.event
 async def START_STREAM(sid, data):
 
+    # Initialise camera instance
+    cam = Picamera2()  
     # Get current time
     current_time = datetime.now()
 
@@ -102,6 +107,7 @@ async def START_STREAM(sid, data):
         
     finally:
         cam.stop()
+        cam.close()
         print(f"🟠 | Camera instance closed")
 
 
