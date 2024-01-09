@@ -88,7 +88,7 @@ async def START_STREAM(sid, data):
             cam.capture_file("live_frame.jpg")
 
             # Open the image and return the data as a base64 encoded string
-            with open("live_frame", "rb") as image_file:
+            with open("live_frame.jpg", "rb") as image_file:
                 frame_data = image_file.read()
                 # Send the frame over socket
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
