@@ -51,3 +51,4 @@ def setCaptureSpec(data,cam,capture_mode):
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
 
     return cam
+
