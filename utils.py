@@ -45,7 +45,7 @@ def setCaptureSpec(data,capture_mode):
         print(f"🟠 | Camera configured for capture") 
 
     if capture_mode == "STREAM":
-        camera_config = cam.create_video_configuration({"size": (x, y)})
+        camera_config = cam.create_video_configuration({"size": (1920,1080)}) # CHange back to dynamic assignment after test
         cam.options['quality'] = 30
         
     # Apply settings
