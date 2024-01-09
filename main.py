@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.1.4"
+VERSION = "2.0.1.5"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -124,45 +124,3 @@ if __name__ == '__main__':
     port = 8080
     web.run_app(app, port=port)
 
-"""
-        
-        # Stream event
-@sio.event
-async def START_STREAM(sid, data):
-
-    # Get current time
-    current_time = datetime.now()
-
-    # Determine length of video stream
-    if data["time"] is None:
-        end_time = current_time
-    else:
-        end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    
-    print(f"🟠 | Starting video stream to end at {end_time}")
-
-    # Configure video settings
-    cam = setCaptureSpec(data,"STREAM")
-
-    # Create a BytesIO object for streaming
-    frame_buffer = io.BytesIO()
-    encoder.output = frame_buffer
-
-    try:
-        while datetime.now() < end_time:
-            # Capture frame into stream
-            cam.start_encoder(encoder)
-
-            frame_data = frame_buffer.read()
-            # Send the frame over socket
-            await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
-
-            # Rate Limit
-            await asyncio.sleep(0.0016)
-
-    except Exception as e:
-        print(e)
-        
-    finally:
-        cam.stop_encoder()
-        print(f"🟠 | Camera instance closed")"""
