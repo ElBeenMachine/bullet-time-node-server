@@ -80,7 +80,7 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    cam = setCaptureSpec(data,cam,"STREAM")
+    setCaptureSpec(data,cam,"STREAM")
 
     try:
         while datetime.now() < end_time:
