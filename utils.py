@@ -11,12 +11,10 @@ from picamera2.outputs import CircularOutput
 import subprocess
 import os
 
+
 # Initialise camera instance
-try:
-    cam = Picamera2() 
-except Exception:
-    print("Error opening camera instance")  
-    
+cam = Picamera2() 
+
 def getCaptureSpec(data,capture_mode):
     
     # Set default values
