@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.2.3"
+VERSION = "2.0.2.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -76,6 +76,9 @@ async def START_STREAM(sid, data):
         end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
     
     print(f"🟠 | Starting video stream to end at {end_time}")
+
+    # Wait for 1 second to allow any other routes using camera instance to finish
+    await asyncio.sleep(1)
 
     # Configure video settings
     cam = getCaptureSpec(data,"STREAM")
