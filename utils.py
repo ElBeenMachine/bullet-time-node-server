@@ -7,11 +7,14 @@ from datetime import datetime
 from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
+from picamera2.outputs import CircularOutput
+
+encoder = H264Encoder(1000000)
 
 # Initialise camera instance
 cam = Picamera2()
 
-def setCaptureSpec(data):
+def setCaptureSpec(data,capture_mode):
     # Set default values
     x = 1920
     y = 1080
@@ -34,9 +37,13 @@ def setCaptureSpec(data):
             shutterSpeed = data["shutter_speed"]
 
     # Determine capture mode
-    camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-    print(f"🟠 | Camera configured for capture") 
+    if capture_mode == "STILL":
+        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+        print(f"🟠 | Camera configured for capture") 
 
+    if capture_mode == "STREAM":
+        camera_config = cam.create_video_configuration({"size": (x, y)})
+        
     # Apply settings
     cam.set_controls({"ExposureTime": shutterSpeed})
     # cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})

@@ -26,9 +26,8 @@ async def capture(data):
     current_time = datetime.now()
 
     # Configure capture settings
-    cam = setCaptureSpec(data)
+    cam = setCaptureSpec(data,"STILL")
     
-
     # Determine Capture Time
     if data["time"] is None:
         capture_time = current_time
@@ -67,6 +66,8 @@ async def CAPTURE_IMAGE(sid, data):
 # Stream event
 @sio.event
 async def START_STREAM(sid, data):
+    fps = 30
+    duration = 6
     # Get current time
     current_time = datetime.now()
 
@@ -79,22 +80,29 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    cam = setCaptureSpec(data)
-    cam.start()
+    cam = setCaptureSpec(data,"STREAM")
+    cam.encoders = encoder
+
+    #cam.start()
+
+    output = CircularOutput(buffersize=int(fps * (duration + 0.2)), outputtofile=False)
+    output.fileoutput = "file.h264"
+    cam.start_recording(encoder, output)
 
     try:
         while datetime.now() < end_time:
             # Capture frame into stream
-            cam.capture_file("live_frame.jpg")
+            
+            #cam.capture_file("live_frame.jpg")
 
             # Open the image and return the data as a base64 encoded string
-            with open("live_frame.jpg", "rb") as image_file:
+            with open("file.h264", "rb") as image_file:
                 frame_data = image_file.read()
                 # Send the frame over socket
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
 
             # Rate Limit
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
     except Exception as e:
         print(e)
