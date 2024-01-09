@@ -80,7 +80,7 @@ async def START_STREAM(sid, data):
     # Ensures camera is available before use
     async with camera_lock:
         # Configure video settings
-        cam = await getCaptureSpec(data,"STREAM")
+        cam = getCaptureSpec(data,"STREAM")
         try:
             while datetime.now() < end_time:
                 # Capture frame into stream
