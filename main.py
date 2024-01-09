@@ -77,8 +77,8 @@ async def START_STREAM(sid, data):
     
     print(f"🟠 | Starting video stream to end at {end_time}")
 
-    # Wait for 1 second to allow any other routes using camera instance to finish
-    await asyncio.sleep(1)
+    # Wait for 3 seconds to allow any other routes using camera instance to finish
+    await asyncio.sleep(3)
 
     # Configure video settings
     cam = getCaptureSpec(data,"STREAM")
