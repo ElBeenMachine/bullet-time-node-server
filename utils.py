@@ -10,15 +10,15 @@ from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
 import subprocess
 import os
-import io
-
-encoder = H264Encoder(1000000)
 
 
-
+# Initialise camera instance
+camera = Picamera2()  
+    
 def setCaptureSpec(data,capture_mode):
-    # Initialise camera instance
-    cam = Picamera2()
+    # Make new camera instance for capture
+    cam = camera
+  
     # Set default values
     x = 1920
     y = 1080
