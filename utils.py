@@ -42,7 +42,7 @@ def setCaptureSpec(data,capture_mode):
         print(f"🟠 | Camera configured for capture") 
 
     if capture_mode == "STREAM":
-        camera_config = cam.create_video_configuration({"size": (1280, 740)})
+        camera_config = cam.create_video_configuration({"size": (x, y)})
         
     # Apply settings
     cam.set_controls({"ExposureTime": shutterSpeed})
