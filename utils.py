@@ -44,15 +44,15 @@ def getCaptureSpec(data,capture_mode):
         "ExposureTime": shutterSpeed
     }        
 
+    camera_config = cam.create_preview_configuration(main={"size": (resolution["x"], resolution["y"])})
+                                                     
     # Apply settings
-    if capture_mode == "STREAM":        
-            cam.configure(cam.create_video_configuration(main={"size": (1920, 1080)}))
-            cam.options['quality'] = 30
-    
-    if capture_mode == "STILL":
-            cam.configure(cam.create_preview_configuration(main={"size": (resolution["x"], resolution["y"])}))
-    
-    print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
+    if capture_mode == "STREAM":     
+        camera_config = cam.create_video_configuration(main={"size": (1920, 1080)})
+        cam.options['quality'] = 30
+            
+    print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
+    cam.configure(camera_config) 
     cam.set_controls(controls)
     
     return cam
