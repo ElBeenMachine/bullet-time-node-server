@@ -81,16 +81,14 @@ async def START_STREAM(sid, data):
     # Configure video settings
     cam = setCaptureSpec(data,"STREAM")
 
-    encoder.output = FileOutput(f"frame.h264")
 
     try:
         while datetime.now() < end_time:
             # Capture frame into stream
-            cam.start_encoder(encoder)
-            #cam.capture_file("live_frame.jpg")
+            cam.capture_file("live_frame.jpg")
 
             # Open the image and return the data as a base64 encoded string
-            with open("frame.h264", "rb") as image_file:
+            with open("live_frame", "rb") as image_file:
                 frame_data = image_file.read()
                 # Send the frame over socket
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
@@ -102,7 +100,7 @@ async def START_STREAM(sid, data):
         print(e)
         
     finally:
-        cam.stop_encoder()
+        cam.stop()
         print(f"🟠 | Camera instance closed")
 
 @sio.event
