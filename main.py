@@ -85,6 +85,7 @@ async def START_STREAM(sid, data):
     try:
         while datetime.now() < end_time:
             # Capture frame into stream
+            cam.start()
             cam.capture_file("live_frame.jpg")
 
             # Open the image and return the data as a base64 encoded string
