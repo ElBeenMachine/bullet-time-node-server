@@ -33,15 +33,13 @@ def getCaptureSpec(data,capture_mode):
             x = resolution["x"]
             y = resolution["y"]
 
-    if 'iso' in data:
-        if data["iso"] is not None:
-            print("Custom iso specified")
-            iso = data["iso"]
+    if data["iso"]:
+        print("Check")
+        iso = data["iso"]
             
-    if 'shutter_speed' in data:
-        if data["shutter_speed"] is not None:
-            print("Custom shutter speed specified")
-            shutterSpeed = data["shutter_speed"] 
+    if data["shutter_speed"]:
+        print("Check")
+        shutterSpeed = data["shutter_speed"] 
 
     # Default capture setting
     camera_config = cam.create_preview_configuration(main={"size": (x,y)})
