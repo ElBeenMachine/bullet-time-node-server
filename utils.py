@@ -10,6 +10,7 @@ from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
 import subprocess
 import os
+import io
 
 encoder = H264Encoder(1000000)
 
