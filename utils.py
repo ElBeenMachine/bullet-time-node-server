@@ -51,7 +51,7 @@ def getCaptureSpec(data,capture_mode):
             
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
     cam.configure(camera_config) 
-    cam.set_controls(controls)
+    cam.set_controls({"ExposureTime": shutterSpeed})
     
     return cam
 
