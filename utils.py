@@ -32,8 +32,7 @@ def getCaptureSpec(data,capture_mode):
         if resolution['x'] is not None and resolution['y'] is not None:
             x = resolution["x"]
             y = resolution["y"]
-            print("check")
-
+            
     if 'iso' in data:
         if data["iso"] is not None:
             iso = data["iso"]
@@ -47,7 +46,7 @@ def getCaptureSpec(data,capture_mode):
                                                      
     # Apply settings
     if capture_mode == "STREAM":     
-        camera_config = cam.create_video_configuration(main={"size": (1920, 1080)}) # Change back to dynamic assignment after tests
+        camera_config = cam.create_video_configuration(main={"size": (x, y)}) 
         cam.options['quality'] = 30
             
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
