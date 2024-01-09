@@ -10,15 +10,9 @@ from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
 import subprocess
 import os
-
-
-# Initialise camera instance
-camera = Picamera2()  
     
-def setCaptureSpec(data,capture_mode):
-    # Make new camera instance for capture
-    cam = camera
-  
+def setCaptureSpec(data,cam,capture_mode):
+    
     # Set default values
     x = 1920
     y = 1080
@@ -43,11 +37,12 @@ def setCaptureSpec(data,capture_mode):
     # Determine capture mode
     if capture_mode == "STILL":
         camera_config = cam.create_preview_configuration(main={"size": (x, y)})
-        print(f"🟠 | Camera configured for capture") 
+        print(f"🟠 | Camera configured for still capture") 
 
     if capture_mode == "STREAM":
         camera_config = cam.create_video_configuration({"size": (1920,1080)}) # CHange back to dynamic assignment after test
         cam.options['quality'] = 30
+        print(f"🟠 | Camera configured for video stream") 
         
     # Apply settings
     cam.set_controls({"ExposureTime": shutterSpeed})

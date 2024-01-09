@@ -1,12 +1,15 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.1.8"
+VERSION = "2.0.1.9"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
+
+# Initialise camera instance
+cam = Picamera2()  
 
 # Define a connection event
 @sio.event
@@ -24,7 +27,7 @@ async def capture(data):
     current_time = datetime.now()
 
     # Configure capture settings
-    cam = setCaptureSpec(data,"STILL")
+    setCaptureSpec(data,cam,"STILL")
     
     # Determine Capture Time
     if data["time"] is None:
@@ -77,7 +80,7 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    cam = setCaptureSpec(data,"STREAM")
+    cam = setCaptureSpec(data,cam,"STREAM")
 
     try:
         while datetime.now() < end_time:
