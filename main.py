@@ -1,12 +1,15 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.2.1"
+VERSION = "2.0.2.2"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
+
+# Initialise camera instance
+cam = Picamera2() 
 
 
 # Define a connection event
@@ -22,14 +25,15 @@ async def GET_NODE_DATA(sid):
 # Function to capture
 async def capture(data):
 
-    # Initialise camera instance
-    cam = Picamera2()  
-
     # Get current time
     current_time = datetime.now()
 
     # Configure capture settings
-    setCaptureSpec(data,cam,"STILL")
+    settings = getCaptureSpec(data,"STILL")
+
+    # Apply settings
+    cam.configure(settings["config"])
+    cam.set_controls(settings["controls"])
     
     # Determine Capture Time
     if data["time"] is None:
@@ -59,7 +63,6 @@ async def capture(data):
         print(f"🔴 | {e}")
     finally:
         cam.stop()
-        cam.close()
         print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
@@ -71,8 +74,7 @@ async def CAPTURE_IMAGE(sid, data):
 @sio.event
 async def START_STREAM(sid, data):
 
-    # Initialise camera instance
-    cam = Picamera2()  
+    
     # Get current time
     current_time = datetime.now()
 
@@ -85,7 +87,11 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     # Configure video settings
-    setCaptureSpec(data,cam,"STREAM")
+    settings = getCaptureSpec(data,"STREAM")
+
+    cam.configure(settings["config"])
+    cam.set_controls(settings["controls"])
+    cam.options['quality'] = 30
 
     try:
         while datetime.now() < end_time:
@@ -107,7 +113,6 @@ async def START_STREAM(sid, data):
         
     finally:
         cam.stop()
-        cam.close()
         print(f"🟠 | Camera instance closed")
 
 

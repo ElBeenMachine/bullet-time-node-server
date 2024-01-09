@@ -10,8 +10,10 @@ from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
 import subprocess
 import os
+
+cameraSettings = Picamera2()
     
-def setCaptureSpec(data,cam,capture_mode):
+def getCaptureSpec(data,capture_mode):
     
     # Set default values
     x = 1920
@@ -36,19 +38,22 @@ def setCaptureSpec(data,cam,capture_mode):
 
     # Determine capture mode
     if capture_mode == "STILL":
-        camera_config = cam.create_preview_configuration(main={"size": (x, y)})
+        camera_config = cameraSettings.create_preview_configuration(main={"size": (x, y)})
         print(f"🟠 | Camera configured for still capture") 
 
     if capture_mode == "STREAM":
-        camera_config = cam.create_video_configuration({"size": (1920,1080)}) # CHange back to dynamic assignment after test
-        cam.options['quality'] = 30
+        camera_config = cameraSettings.create_video_configuration({"size": (1920,1080)}) # CHange back to dynamic assignment after test
         print(f"🟠 | Camera configured for video stream") 
         
-    # Apply settings
-    cam.set_controls({"ExposureTime": shutterSpeed})
-    # cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
-    cam.configure(camera_config)
+    
     print(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed} ")  
 
-    return cam
+    settings = {
+        "config" : camera_config,
+        "controls" : {"ExposureTime": shutterSpeed}
+    }
 
+    return settings
+
+#cam.set_controls({"ExposureTime": shutterSpeed})
+#cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": round(iso / 100,1)})
