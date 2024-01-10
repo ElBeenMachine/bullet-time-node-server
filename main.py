@@ -63,9 +63,7 @@ async def capture(data):
 async def CAPTURE_IMAGE(sid, data):
     asyncio.create_task(capture(data))
 
-async def capture_stream(data, end_time):
-    # Configure video settings
-    cam = getCaptureSpec(data,"STREAM")
+async def capture_stream(cam, data, end_time):
     try:
         while datetime.now() < end_time:
             # Capture frame into stream
@@ -103,17 +101,22 @@ async def START_STREAM(sid, data):
     print(f"🟠 | Starting video stream to end at {end_time}")
 
     async with camera_lock:
-        task = asyncio.create_task(capture_stream(data, end_time))
+        # Configure video settings
+        cam = getCaptureSpec(data,"STREAM")
+    
+        task = asyncio.create_task(capture_stream(cam, data, end_time))
         
         # Stop Stream Route
         @sio.event
         async def STOP_STREAM(sid):
+            cam.stop()
             print("🟠 | Stopping video stream")
             task.cancel()
 
         # Disconnect Event Route
         @sio.event
         async def disconnect(sid):
+            cam.stop()
             print("🔴 | Client connection severed, stopping video stream")
             task.cancel()
 
