@@ -35,15 +35,16 @@ async def capture(data):
     # Calculate sleep time
     sleep_time = (capture_time - current_time).total_seconds()
     
-    # Sleep until it's time to capture
-    await asyncio.sleep(max(0, sleep_time))
-            
     # Capture a picture from the source and process it into a Base64 String
     async with camera_lock: 
         # Configure capture settings
         cam = getCaptureSpec(data,"STILL")
         try:
             cam.start()
+
+            # Sleep until it's time to capture
+            await asyncio.sleep(max(0, sleep_time))
+            
             print("🟢 | Capturing image")
             cam.capture_file("img.jpg")
 
