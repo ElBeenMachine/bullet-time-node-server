@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.5"
+VERSION = "2.0.6"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -36,27 +36,27 @@ async def capture(data):
     sleep_time = (capture_time - current_time).total_seconds()
     
     # Capture a picture from the source and process it into a Base64 String
+    async with camera_lock:
+        # Configure capture settings
+        cam = getCaptureSpec(data,"STILL")
+        try:
+            # Sleep until it's time to capture
+            await asyncio.sleep(max(0, sleep_time))
+            
+            cam.start()
+            
+            print("🟢 | Capturing image")
+            cam.capture_file("img.jpg")
 
-    # Configure capture settings
-    cam = getCaptureSpec(data,"STILL")
-    try:
-        # Sleep until it's time to capture
-        await asyncio.sleep(max(0, sleep_time))
-        
-        cam.start()
-        
-        print("🟢 | Capturing image")
-        cam.capture_file("img.jpg")
-
-        # Open the image and return the data as a base64 encoded string
-        with open("img.jpg", "rb") as image_file:
-            data = image_file.read()
-            await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
-    except Exception as e:
-        print(f"🔴 | {e}")
-    finally:
-        cam.stop()
-        print(f"🟠 | Camera instance closed")
+            # Open the image and return the data as a base64 encoded string
+            with open("img.jpg", "rb") as image_file:
+                data = image_file.read()
+                await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
+        except Exception as e:
+            print(f"🔴 | {e}")
+        finally:
+            cam.stop()
+            print(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -91,7 +91,6 @@ async def capture_stream(data, end_time):
 # Define stream event
 @sio.event
 async def START_STREAM(sid, data):
-    
     # Get current time
     current_time = datetime.now()
 
@@ -103,19 +102,20 @@ async def START_STREAM(sid, data):
     
     print(f"🟠 | Starting video stream to end at {end_time}")
 
-    task = asyncio.create_task(capture_stream(data, end_time))
-    
-    # Stop Stream Route
-    @sio.event
-    async def STOP_STREAM(sid):
-        print("🟠 | Stopping video stream")
-        task.cancel()
+    async with camera_lock:
+        task = asyncio.create_task(capture_stream(data, end_time))
+        
+        # Stop Stream Route
+        @sio.event
+        async def STOP_STREAM(sid):
+            print("🟠 | Stopping video stream")
+            task.cancel()
 
-    # Disconnect Event Route
-    @sio.event
-    async def DISCONNECT(sid):
-        print("🟠 | Stopping video stream")
-        task.cancel()
+        # Disconnect Event Route
+        @sio.event
+        async def DISCONNECT(sid):
+            print("🟠 | Stopping video stream")
+            task.cancel()
 
 # Define an error event
 @sio.event
