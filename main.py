@@ -1,7 +1,7 @@
 # Import libraries
 from utils import *
 
-VERSION = "2.0.3"
+VERSION = "2.0.4"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -79,7 +79,7 @@ async def capture_stream(data, end_time):
                 await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
 
             # Rate Limit
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.0167)
 
     except Exception as e:
         print(e)
