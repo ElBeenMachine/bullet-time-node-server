@@ -1,8 +1,7 @@
 # Import libraries
 from utils import *
-import time
 
-VERSION = "2.0.2.9"
+VERSION = "2.0.3"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -106,21 +105,18 @@ async def START_STREAM(sid, data):
     # Ensures camera is available before use
     async with camera_lock:
         task = asyncio.create_task(capture_stream(data, end_time))
-        await asyncio.sleep(10)
-        task.cancel()
-
-
-@sio.event
-def UPDATE(sid):
-    try:
-        # Run the update script in the background
-        os.system("cd ~/btns && nohup ./update.sh &> /dev/null &")
-        print("🟢 | Update script started in the background.")
         
-        # Exit the current process
-        os._exit(0)
-    except Exception as e:
-        print(f"🔴 | Failed to start update script: {e}")
+        # Stop Stream Route
+        @sio.event
+        async def STOP_STREAM(sid):
+            print("🟠 | Stopping video stream")
+            task.cancel()
+
+        # Disconnect Event Route
+        @sio.event
+        async def DISCONNECT(sid):
+            print("🟠 | Stopping video stream")
+            task.cancel()
 
 # Define an error event
 @sio.event
