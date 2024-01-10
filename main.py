@@ -113,8 +113,8 @@ async def START_STREAM(sid, data):
 
         # Disconnect Event Route
         @sio.event
-        async def DISCONNECT(sid):
-            print("🟠 | Stopping video stream")
+        async def disconnect(sid):
+            print("🔴 | Client connection severed, stopping video stream")
             task.cancel()
 
 # Define an error event
