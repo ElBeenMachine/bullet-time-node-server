@@ -40,10 +40,10 @@ async def capture(data):
     # Configure capture settings
     cam = getCaptureSpec(data,"STILL")
     try:
-        cam.start()
-
         # Sleep until it's time to capture
         await asyncio.sleep(max(0, sleep_time))
+        
+        cam.start()
         
         print("🟢 | Capturing image")
         cam.capture_file("img.jpg")
