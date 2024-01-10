@@ -1,5 +1,6 @@
 # Import libraries
 from utils import *
+import time
 
 VERSION = "2.0.2.9"
 
@@ -62,6 +63,31 @@ async def capture(data):
 async def CAPTURE_IMAGE(sid, data):
     asyncio.create_task(capture(data))
 
+async def capture_stream(data, end_time):
+    # Configure video settings
+    cam = getCaptureSpec(data,"STREAM")
+    try:
+        while datetime.now() < end_time:
+            # Capture frame into stream
+            cam.start()
+            cam.capture_file("live_frame.jpg")
+
+            # Open the image and return the data as a base64 encoded string
+            with open("live_frame.jpg", "rb") as image_file:
+                frame_data = image_file.read()
+                # Send the frame over socket
+                await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
+
+            # Rate Limit
+            await asyncio.sleep(0.1)
+
+    except Exception as e:
+        print(e)
+        
+    finally:
+        cam.stop()
+        print(f"🟠 | Camera instance closed")    
+
 # Define stream event
 @sio.event
 async def START_STREAM(sid, data):
@@ -79,29 +105,9 @@ async def START_STREAM(sid, data):
 
     # Ensures camera is available before use
     async with camera_lock:
-        # Configure video settings
-        cam = getCaptureSpec(data,"STREAM")
-        try:
-            while datetime.now() < end_time:
-                # Capture frame into stream
-                cam.start()
-                cam.capture_file("live_frame.jpg")
-
-                # Open the image and return the data as a base64 encoded string
-                with open("live_frame.jpg", "rb") as image_file:
-                    frame_data = image_file.read()
-                    # Send the frame over socket
-                    await sio.emit("VIDEO_FRAME", {"frame_data": frame_data})
-
-                # Rate Limit
-                await asyncio.sleep(0.0016)
-
-        except Exception as e:
-            print(e)
-            
-        finally:
-            cam.stop()
-            print(f"🟠 | Camera instance closed")
+        task = asyncio.create_task(capture_stream(data, end_time))
+        await asyncio.sleep(10)
+        task.cancel()
 
 
 @sio.event
