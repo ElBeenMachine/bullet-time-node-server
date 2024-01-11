@@ -124,7 +124,7 @@ async def START_STREAM(sid, data):
             task.cancel()
 
 @sio.event
-async def REQUEST_LOG(sid):
+async def GET_LOGS(sid):
     with open('./logs/logs.log', 'r') as file:
         log_content = file.read()
     await sio.emit('LOG_INFO', {'logs': log_content, "node": platform.node() })
