@@ -1,7 +1,10 @@
 # Import libraries
+import logging
+logging.basicConfig(filename="./logs.log", filemode="w", format="[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n", level=logging.DEBUG)
+
 from utils import *
 
-VERSION = "2.0.7"
+VERSION = "2.1.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -11,7 +14,7 @@ sio.attach(app)
 # Define a connection event
 @sio.event
 async def connect(sid, environ):
-    print(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
+    logging.info(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
 
 # Define a node data event
 @sio.event
@@ -20,7 +23,6 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-
     # Get current time
     current_time = datetime.now()
 
@@ -30,7 +32,7 @@ async def capture(data):
     else:
         capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
-    print(f"🟠 | Capturing image at {capture_time}")
+    logging.info(f"🟠 | Capturing image at {capture_time}")
     
     # Calculate sleep time
     sleep_time = (capture_time - current_time).total_seconds()
@@ -45,7 +47,8 @@ async def capture(data):
             
             cam.start()
             
-            print("🟢 | Capturing image")
+            logging.info("🟢 | Capturing image")
+
             cam.capture_file("img.jpg")
 
             # Open the image and return the data as a base64 encoded string
@@ -53,10 +56,10 @@ async def capture(data):
                 data = image_file.read()
                 await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
         except Exception as e:
-            print(f"🔴 | {e}")
+            logging.error(f"🔴 | {e}")
         finally:
             cam.stop()
-            print(f"🟠 | Camera instance closed")
+            logging.info(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -80,11 +83,11 @@ async def capture_stream(cam, data, end_time):
             await asyncio.sleep(0.0167)
 
     except Exception as e:
-        print(e)
+        logging.error(f"🔴 | {e}")
         
     finally:
         cam.stop()
-        print(f"🟠 | Camera instance closed")    
+        logging.info(f"🟠 | Camera instance closed")  
 
 # Define stream event
 @sio.event
@@ -97,8 +100,8 @@ async def START_STREAM(sid, data):
         end_time = current_time
     else:
         end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
-    
-    print(f"🟠 | Starting video stream to end at {end_time}")
+
+    logging.info(f"🟠 | Starting video stream to end at {end_time}")
 
     async with camera_lock:
         # Configure video settings
@@ -110,20 +113,26 @@ async def START_STREAM(sid, data):
         @sio.event
         async def STOP_STREAM(sid):
             cam.stop()
-            print("🟠 | Stopping video stream")
+            logging.info(f"🟠 | Stopping video stream")
             task.cancel()
 
         # Disconnect Event Route
         @sio.event
         async def disconnect(sid):
             cam.stop()
-            print("🔴 | Client connection severed, stopping video stream")
+            logging.error("🔴 | Client connection severed, stopping video stream")
             task.cancel()
+
+@sio.event
+async def GET_LOGS(sid):
+    with open('./logs.log', 'r') as file:
+        log_content = file.read()
+    await sio.emit('LOGS', {'logs': log_content, "node": platform.node() })
 
 # Define an error event
 @sio.event
 def event_error(sid, error):
-    print(f"Error from {sid}: {error}")
+    logging.error(f"🔴 | {error}")
 
 # Set the port for the Socket.IO server
 if __name__ == '__main__':
