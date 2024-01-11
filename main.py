@@ -1,10 +1,21 @@
 # Import libraries
 import logging
-logging.basicConfig(filename="./logs.log", filemode="w", format="[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n", level=logging.DEBUG)
-
 from utils import *
 
-VERSION = "2.1.1"
+logger = logging.getLogger(platform.node())
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n")
+
+# Add console handler
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler("./logs.log", mode="w")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+VERSION = "2.2.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -14,7 +25,7 @@ sio.attach(app)
 # Define a connection event
 @sio.event
 async def connect(sid, environ):
-    logging.info(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
+    logger.info(f"🟢 | Client connected")
 
 # Define a node data event
 @sio.event
@@ -32,34 +43,31 @@ async def capture(data):
     else:
         capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
-    logging.info(f"🟠 | Capturing image at {capture_time}")
+    logger.info(f"🟠 | Capturing image at {capture_time}")
     
     # Calculate sleep time
     sleep_time = (capture_time - current_time).total_seconds()
     
     # Capture a picture from the source and process it into a Base64 String
-    async with camera_lock:
-        # Configure capture settings
-        cam = getCaptureSpec(data,"STILL")
-        try:
-            # Sleep until it's time to capture
-            await asyncio.sleep(max(0, sleep_time))
-            
-            cam.start()
-            
-            logging.info("🟢 | Capturing image")
+    # Configure capture settings
+    cam = getCaptureSpec(data,"STILL")
 
-            cam.capture_file("img.jpg")
+    try:
+        # Sleep until it's time to capture
+        await asyncio.sleep(max(0, sleep_time))
+        
+        logger.info("🟠 | Capturing image")
 
-            # Open the image and return the data as a base64 encoded string
-            with open("img.jpg", "rb") as image_file:
-                data = image_file.read()
-                await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
-        except Exception as e:
-            logging.error(f"🔴 | {e}")
-        finally:
-            cam.stop()
-            logging.info(f"🟠 | Camera instance closed")
+        cam.capture_file("img.jpg")
+
+        # Open the image and return the data as a base64 encoded string
+        with open("img.jpg", "rb") as image_file:
+            data = image_file.read()
+            await sio.emit("IMAGE_DATA", {"image_data": data, "node_name": platform.node()})
+    except Exception as e:
+        logger.error(f"🔴 | {e}")
+    finally:
+        logger.info(f"🟢 | Image Captured")
 
 # Define a image capture event
 @sio.event
@@ -83,11 +91,11 @@ async def capture_stream(cam, data, end_time):
             await asyncio.sleep(0.0167)
 
     except Exception as e:
-        logging.error(f"🔴 | {e}")
+        logger.error(f"🔴 | {e}")
         
     finally:
         cam.stop()
-        logging.info(f"🟠 | Camera instance closed")  
+        logger.info(f"🟠 | Camera instance closed")  
 
 # Define stream event
 @sio.event
@@ -101,27 +109,24 @@ async def START_STREAM(sid, data):
     else:
         end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
-    logging.info(f"🟠 | Starting video stream to end at {end_time}")
+    logger.info(f"🟠 | Starting video stream to end at {end_time}")
 
-    async with camera_lock:
-        # Configure video settings
-        cam = getCaptureSpec(data,"STREAM")
+    # Configure video settings
+    cam = getCaptureSpec(data,"STREAM")
+
+    task = asyncio.create_task(capture_stream(cam, data, end_time))
     
-        task = asyncio.create_task(capture_stream(cam, data, end_time))
-        
-        # Stop Stream Route
-        @sio.event
-        async def STOP_STREAM(sid):
-            cam.stop()
-            logging.info(f"🟠 | Stopping video stream")
-            task.cancel()
+    # Stop Stream Route
+    @sio.event
+    async def STOP_STREAM(sid):
+        logger.info(f"🟠 | Stopping video stream")
+        task.cancel()
 
-        # Disconnect Event Route
-        @sio.event
-        async def disconnect(sid):
-            cam.stop()
-            logging.error("🔴 | Client connection severed, stopping video stream")
-            task.cancel()
+    # Disconnect Event Route
+    @sio.event
+    async def disconnect(sid):
+        logger.error("🔴 | Client connection severed, stopping video stream")
+        task.cancel()
 
 @sio.event
 async def GET_LOGS(sid):
@@ -132,7 +137,7 @@ async def GET_LOGS(sid):
 # Define an error event
 @sio.event
 def event_error(sid, error):
-    logging.error(f"🔴 | {error}")
+    logger.error(f"🔴 | {error}")
 
 # Set the port for the Socket.IO server
 if __name__ == '__main__':
