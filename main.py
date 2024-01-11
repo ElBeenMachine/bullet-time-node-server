@@ -1,10 +1,10 @@
 # Import libraries
 import logging
-logging.basicConfig(filename="./logs.log", filemode="w", format="%(name)s → %(levelname)s: %(message)s")
+logging.basicConfig(filename="./logs.log", filemode="w", format="[%(asctime)s] %(name)s → %(levelname)s: %(message)s", level=logging.DEBUG)
 
 from utils import *
 
-VERSION = "2.0.7"
+VERSION = "2.1.7"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
@@ -127,7 +127,7 @@ async def START_STREAM(sid, data):
 async def GET_LOGS(sid):
     with open('./logs.log', 'r') as file:
         log_content = file.read()
-    await sio.emit('LOG_INFO', {'logs': log_content, "node": platform.node() })
+    await sio.emit('LOGS', {'logs': log_content, "node": platform.node() })
 
 # Define an error event
 @sio.event
