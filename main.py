@@ -1,6 +1,6 @@
 # Import libraries
 import logging
-logging.basicConfig(filename="./logs/logs.log", filemode="w", format="%(name)s → %(levelname)s: %(message)s")
+logging.basicConfig(filename="./logs.log", filemode="w", format="%(name)s → %(levelname)s: %(message)s")
 
 from utils import *
 
@@ -125,7 +125,7 @@ async def START_STREAM(sid, data):
 
 @sio.event
 async def GET_LOGS(sid):
-    with open('./logs/logs.log', 'r') as file:
+    with open('./logs.log', 'r') as file:
         log_content = file.read()
     await sio.emit('LOG_INFO', {'logs': log_content, "node": platform.node() })
 
