@@ -11,15 +11,16 @@ from picamera2.outputs import CircularOutput
 import subprocess
 import os
 
+os.environ['LIBCAMERA_LOG_LEVELS'] = '4'
 
 # Initialise camera instance
 cam = Picamera2() 
-
-# Camera lock to ensure its only used by one route at a time
-camera_lock = asyncio.Lock()
+cam.start()
 
 def getCaptureSpec(data,capture_mode):
-    
+    # Stop camera ready for configuration
+    cam.stop()
+
     # Set default values
     x = 1920
     y = 1080
@@ -52,5 +53,6 @@ def getCaptureSpec(data,capture_mode):
     cam.configure(camera_config) 
     cam.set_controls({"ExposureTime": shutterSpeed})
     
+    cam.start()
     return cam
 
