@@ -11,8 +11,6 @@ from picamera2.outputs import CircularOutput
 import subprocess
 import os
 
-import logging
-
 
 # Initialise camera instance
 cam = Picamera2() 
@@ -50,10 +48,7 @@ def getCaptureSpec(data,capture_mode):
     if capture_mode == "STREAM":     
         camera_config = cam.create_video_configuration(main={"size": (x, y)}) 
         cam.options['quality'] = 30
-            
-    
-    logging.info(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
-   
+               
     cam.configure(camera_config) 
     cam.set_controls({"ExposureTime": shutterSpeed})
     

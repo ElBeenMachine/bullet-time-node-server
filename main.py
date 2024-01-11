@@ -1,6 +1,6 @@
 # Import libraries
 import logging
-logging.basicConfig(filename="./logs.log", filemode="w", format="%(name)s → %(levelname)s: %(message)s")
+logging.basicConfig(filename="./logs/logs.log", filemode="w", format="%(name)s → %(levelname)s: %(message)s")
 
 from utils import *
 
@@ -23,7 +23,6 @@ async def GET_NODE_DATA(sid):
 
 # Function to capture
 async def capture(data):
-
     # Get current time
     current_time = datetime.now()
 
@@ -123,6 +122,12 @@ async def START_STREAM(sid, data):
             cam.stop()
             logging.error("🔴 | Client connection severed, stopping video stream")
             task.cancel()
+
+@sio.event
+async def REQUEST_LOG(sid):
+    with open('./logs/logs.log', 'r') as file:
+        log_content = file.read()
+    await sio.emit('LOG_INFO', {'logs': log_content, "node": platform.node() })
 
 # Define an error event
 @sio.event
