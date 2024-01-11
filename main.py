@@ -1,10 +1,10 @@
 # Import libraries
 import logging
-logging.basicConfig(filename="./logs.log", filemode="w", format="[%(asctime)s] %(name)s → %(levelname)s: %(message)s", level=logging.DEBUG)
+logging.basicConfig(filename="./logs.log", filemode="w", format="[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n", level=logging.DEBUG)
 
 from utils import *
 
-VERSION = "2.1.0"
+VERSION = "2.1.1"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
