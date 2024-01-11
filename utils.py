@@ -52,7 +52,7 @@ def getCaptureSpec(data,capture_mode):
         cam.options['quality'] = 30
             
     
-    logging.log(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
+    logging.info(f"🟠 | Resolution set to {x}x{y} | Iso set to {iso} | Shutter speed set to {shutterSpeed}") 
    
     cam.configure(camera_config) 
     cam.set_controls({"ExposureTime": shutterSpeed})

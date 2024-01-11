@@ -14,7 +14,7 @@ sio.attach(app)
 # Define a connection event
 @sio.event
 async def connect(sid, environ):
-    logging.log(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
+    logging.info(f"🟢 | Client {environ['REMOTE_ADDR']} connected")
 
 # Define a node data event
 @sio.event
@@ -33,7 +33,7 @@ async def capture(data):
     else:
         capture_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
-    logging.log(f"🟠 | Capturing image at {capture_time}")
+    logging.info(f"🟠 | Capturing image at {capture_time}")
     
     # Calculate sleep time
     sleep_time = (capture_time - current_time).total_seconds()
@@ -48,7 +48,7 @@ async def capture(data):
             
             cam.start()
             
-            logging.log("🟢 | Capturing image")
+            logging.info("🟢 | Capturing image")
 
             cam.capture_file("img.jpg")
 
@@ -60,7 +60,7 @@ async def capture(data):
             logging.error(f"🔴 | {e}")
         finally:
             cam.stop()
-            logging.log(f"🟠 | Camera instance closed")
+            logging.info(f"🟠 | Camera instance closed")
 
 # Define a image capture event
 @sio.event
@@ -88,7 +88,7 @@ async def capture_stream(cam, data, end_time):
         
     finally:
         cam.stop()
-        logging.log(f"🟠 | Camera instance closed")  
+        logging.info(f"🟠 | Camera instance closed")  
 
 # Define stream event
 @sio.event
@@ -102,7 +102,7 @@ async def START_STREAM(sid, data):
     else:
         end_time = datetime.strptime(data["time"], "%a, %d %b %Y %H:%M:%S %Z")
 
-    logging.log(f"🟠 | Starting video stream to end at {end_time}")
+    logging.info(f"🟠 | Starting video stream to end at {end_time}")
 
     async with camera_lock:
         # Configure video settings
@@ -114,7 +114,7 @@ async def START_STREAM(sid, data):
         @sio.event
         async def STOP_STREAM(sid):
             cam.stop()
-            logging.log(f"🟠 | Stopping video stream")
+            logging.info(f"🟠 | Stopping video stream")
             task.cancel()
 
         # Disconnect Event Route
