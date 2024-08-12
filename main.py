@@ -35,7 +35,7 @@ async def GET_NODE_DATA(sid):
 # Function to capture
 async def capture(data):
     # Get current time
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(timezone.utc).replace(tzinfo=None)
 
     # Determine Capture Time
     if data["time"] is None:
@@ -101,7 +101,7 @@ async def capture_stream(cam, data, end_time):
 @sio.event
 async def START_STREAM(sid, data):
     # Get current time
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(timezone.utc).replace(tzinfo=None)
 
     # Determine length of video stream
     if data["time"] is None:
