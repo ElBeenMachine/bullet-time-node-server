@@ -15,7 +15,7 @@ file_handler = logging.FileHandler("./logs.log", mode="w")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-VERSION = "2.2.2"
+VERSION = "2.2.3"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
