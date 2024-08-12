@@ -7,6 +7,7 @@ echo ""
 
 echo "================= Installing Dependencies ================="
 sudo apt-get install python3-socketio python3-aiohttp python3-picamera2 -y
+sudo timedatectl set-timezone UTC
 
 echo ""
 
