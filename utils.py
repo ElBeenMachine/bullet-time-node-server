@@ -39,7 +39,7 @@ def getCaptureSpec(data,capture_mode):
     x = 1920
     y = 1080
     iso = 100
-    shutterSpeed = 1000 
+    shutterSpeed = 1000 * 1000  
     
     # Store camera settings if specified 
     if 'resolution' in data:
@@ -54,7 +54,7 @@ def getCaptureSpec(data,capture_mode):
             
     if 'shutter_speed' in data:
         if data["shutter_speed"] is not None:
-            shutterSpeed = data["shutter_speed"] 
+            shutterSpeed = int(data["shutter_speed"]) * 1000 # convert to microseconds, sent as millis
 
     # Default capture setting
     camera_config = cam.create_still_configuration(main={"size": (x,y)})
