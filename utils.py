@@ -10,8 +10,22 @@ from picamera2.outputs import FileOutput
 from picamera2.outputs import CircularOutput
 import subprocess
 import os
+import logging
 
 os.environ['LIBCAMERA_LOG_LEVELS'] = '4'
+
+logger = logging.getLogger(platform.node())
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n")
+
+# Add console handler
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler("./logs.log", mode="w")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 # Initialise camera instance
 cam = Picamera2() 
@@ -52,6 +66,7 @@ def getCaptureSpec(data,capture_mode):
                
     cam.configure(camera_config) 
     cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": iso / 100})
+    logger.info(f"🟢 | Shutter Speed set to: {shutterSpeed} Iso set to {iso / 100}")
     
     cam.start()
     return cam

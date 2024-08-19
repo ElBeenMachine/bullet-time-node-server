@@ -1,21 +1,7 @@
 # Import libraries
-import logging
 from utils import *
 
-logger = logging.getLogger(platform.node())
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter("[%(asctime)s] %(name)s → %(levelname)s: %(message)s\n")
-
-# Add console handler
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
-file_handler = logging.FileHandler("./logs.log", mode="w")
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-
-VERSION = "2.2.8"
+VERSION = "2.2.9"
 
 # Create a new Socket.IO server with specified port
 sio = socketio.AsyncServer(cors_allowed_origins='*')
