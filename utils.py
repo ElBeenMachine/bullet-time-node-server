@@ -51,7 +51,7 @@ def getCaptureSpec(data,capture_mode):
         cam.options['quality'] = 30
                
     cam.configure(camera_config) 
-    cam.set_controls({"ExposureTime": shutterSpeed})
+    cam.set_controls({"ExposureTime": shutterSpeed, "AnalogueGain": iso / 100})
     
     cam.start()
     return cam
