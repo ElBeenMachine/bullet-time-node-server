@@ -69,7 +69,7 @@ def getCaptureSpec(data,capture_mode):
     logger.info(f"🟢 | Shutter Speed set to: {shutterSpeed} Iso set to {iso / 100}")
 
     # Disables AWB 
-    cam.set_controls({"ColourGains": (1.0, 1.0)})
+    cam.set_controls({"ColourGains": (2.0, 2.0)})
 
     cam.start()
     return cam
