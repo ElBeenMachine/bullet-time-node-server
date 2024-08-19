@@ -57,7 +57,7 @@ def getCaptureSpec(data,capture_mode):
             shutterSpeed = data["shutter_speed"] 
 
     # Default capture setting
-    camera_config = cam.create_preview_configuration(main={"size": (x,y)})
+    camera_config = cam.create_still_configuration(main={"size": (x,y)})
                                                      
     # Apply settings
     if capture_mode == "STREAM":     
@@ -69,7 +69,7 @@ def getCaptureSpec(data,capture_mode):
     logger.info(f"🟢 | Shutter Speed set to: {shutterSpeed} Iso set to {iso / 100}")
 
     # Disables AWB 
-    cam.set_controls({"ColourGains": (2.0, 2.0)})
+    cam.set_controls({"ColourGains": (1.0, 1.0)})
 
     cam.start()
     return cam
